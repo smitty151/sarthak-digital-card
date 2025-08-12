@@ -1,23 +1,15 @@
 'use client'
 
 /**
- * Main page component for Sarthak's digital contacts & resume site.
- * This file assembles all of the UI elements, including data definitions,
- * reusable components, and the top-level page component.
+ * Main page component for Sarthak's digital card + resume site.
+ * This file defines the content data object and all UI components.
+ * Key goals: high contrast for readability, clean interactions, minimal style.
  */
 
-import { useEffect, useState, useRef } from 'react'
-import {
-  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download
-} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react'
+import { BarChart2, BookOpen, Briefcase, Calendar, ChevronDown, ChevronUp, Copy, Download, FileText, Layers, Linkedin, Mail, MapPin, Moon, Sun } from 'lucide-react';
 
-// ---------------------------------------------------------------------------
 // Custom content data
-//
-// This `content` object centralizes all of the editable data used on the page.
-// Update these values to change your name, title, contact details, biography,
-// quick stats, skills and experience timeline. Keeping this data separate
-// makes the rest of the component definitions purely presentational.
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
@@ -98,21 +90,7 @@ const content = {
   ]
 };
 
-// ---------------------------------------------------------------------------
 // Reusable components
-//
-// The following components encapsulate common UI patterns used across
-// the page. They are defined within the same file for simplicity, but could
-// easily be extracted to their own files. Each component is documented
-// so you can quickly see what it does and how it contributes to the layout.
-/**
- * Toast component
- *
- * A small floating notification used to inform the user of transient
- * status messages (e.g. copy success, form submission errors). When
- * `open` is false the component returns null and renders nothing.
- * The `kind` prop controls the background colour (success or error).
- */
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null;
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
@@ -120,13 +98,6 @@ function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'suc
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
 
-/**
- * SectionWithAnimation component
- *
- * Wraps any content in an intersection observer that fades the content in
- * and slides it upward as it scrolls into view. This subtle animation helps
- * draw the eye to each section of the page as the user scrolls.
- */
 const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef(null);
@@ -161,14 +132,6 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-/**
- * Page component
- *
- * This is the top-level component for the digital contact page. It wires
- * together the stateful behaviours (copying, form submission, PDF toggles)
- * and composes the various reusable sections defined below. Most of the
- * layout is defined via Tailwind utility classes.
- */
 export default function Page() {
   const [copied, setCopied] = useState(false);
   const [redirectUrl, setRedirectUrl] = useState<string>('');
@@ -183,13 +146,6 @@ export default function Page() {
     if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`);
   }, []);
 
-  /**
-   * downloadVCard
-   *
-   * Builds and triggers a download of a VCard (.vcf) file containing your
-   * contact information. This allows visitors to save your details directly
-   * to their address book from the site.
-   */
   const downloadVCard = () => {
     const lines = [
       'BEGIN:VCARD','VERSION:3.0',`N:Mittal;Sarthak;;;`,`FN:${content.name}`,
@@ -205,12 +161,6 @@ export default function Page() {
     a.click();
   };
 
-  /**
-   * copyText
-   *
-   * Copies the provided string to the clipboard and shows a toast. If the
-   * operation fails, an error toast is shown instead.
-   */
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -230,15 +180,6 @@ export default function Page() {
     }
   };
 
-  /**
-   * Form component
-   *
-   * Renders the contact form. On submit, posts data to a Formspree endpoint
-   * defined in the NEXT_PUBLIC_FORMSPREE_ENDPOINT environment variable.
-   * Includes spam prevention (hidden `_gotcha` field) and shows toast
-   * notifications on success or failure. Redirects to the /thanks page after
-   * a brief delay on successful submission.
-   */
   const Form = () => {
     const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || '';
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -280,11 +221,11 @@ export default function Page() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -292,14 +233,6 @@ export default function Page() {
     );
   };
 
-  /**
-   * Section component
-   *
-   * Generic wrapper used to delineate different sections of the page (About,
-   * Quick Stats, Experience, Skills, Files, Contact). Accepts an id for
-   * linking, a title, optional actions (e.g. header buttons) and an icon.
-   * Wraps its content in SectionWithAnimation for fade-in on scroll.
-   */
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
@@ -317,20 +250,11 @@ export default function Page() {
     </section>
   );
 
-  /**
-   * PdfCard component
-   *
-   * Displays a card for a PDF document (e.g. Resume or Cover Letter) with
-   * actions to open the PDF in a new tab or expand an inline preview. When
-   * `expanded` is true, a Tailwind-styled <object> element is shown with the
-   * PDF embedded; otherwise only the header and buttons are visible.
-   * Tinted background and subtle border/shadow to distinguish the card from its section */
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[color:var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          {/* Use secondary styling for better contrast against the section background */}
           <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
@@ -343,7 +267,7 @@ export default function Page() {
       </div>
       {expanded && (
         <div className="mt-4 h-[72vh] min-h-[420px] rounded-xl overflow-hidden">
-          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full rounded-xl">
+          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
             <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noopener noreferrer">Open it in a new tab.</a></p>
           </object>
         </div>
@@ -351,12 +275,6 @@ export default function Page() {
     </div>
   );
 
-  /**
-   * SkillPill component
-   *
-   * Renders a pill-shaped badge for a skill. On hover, shows a tooltip
-   * containing the description of the skill. Uses state to track hover.
-   */
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     return (
@@ -377,13 +295,6 @@ export default function Page() {
     );
   };
 
-  /**
-   * ExperienceTimeline component
-   *
-   * Displays a vertical timeline of job experiences. Each timeline entry
-   * includes the company name, role, duration and a description of the work.
-   * A coloured dot and connecting line visually join the entries.
-   */
   const ExperienceTimeline = ({ data }: { data: { company: string, role: string, duration: string, description: string }[] }) => (
     <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
       {data.map((item, index) => (
@@ -397,12 +308,6 @@ export default function Page() {
     </div>
   );
 
-  /**
-   * SkillsSection component
-   *
-   * Iterates over the categories in the skills data and renders a header
-   * followed by a set of SkillPill components for each skill in that category.
-   */
   const SkillsSection = ({ skillsData }: { skillsData: Record<string, { name: string; description: string }[]> }) => (
     <div className="space-y-6">
       {Object.keys(skillsData).map(category => (
@@ -419,7 +324,7 @@ export default function Page() {
   );
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
+    <div className="min-h-screen relative overflow-hidden bg-[var(--bg)] text-[var(--ink)]">
       <style>{`
         :root {
           --primary-orange: #f97316;
@@ -435,23 +340,6 @@ export default function Page() {
           --ink-dark: #f0f0f0;
           --muted-dark: #a1a1aa;
           --ring-dark: #f97316;
-        }
-
-        /* Map tokens to working CSS vars used by components */
-        :root {
-          --bg: var(--bg-light);
-          --card: var(--card-light);
-          --ink: var(--ink-light);
-          --muted: var(--muted-light);
-          --ring: var(--ring-light);
-        }
-        .dark {
-          --bg: var(--bg-dark);
-          --card: var(--card-dark);
-          --ink: var(--ink-dark);
-          --muted: var(--muted-dark);
-          --ring: var(--ring-dark);
-        }
         }
 
         @keyframes gradient-shift {
@@ -471,21 +359,21 @@ export default function Page() {
         }
 
         .card {
-          @apply bg-[color:var(--card)] shadow-sm;
+          @apply bg-[var(--card)] shadow-sm;
         }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
-      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
+      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#about" className="hover:text-[color:var(--accent-blue)] transition-colors">About</a>
-            <a href="#experience" className="hover:text-[color:var(--accent-blue)] transition-colors">Experience</a>
-            <a href="#files" className="hover:text-[color:var(--accent-blue)] transition-colors">Files</a>
-            <a href="#contact" className="hover:text-[color:var(--accent-blue)] transition-colors">Contact</a>
+            <a href="#about" className="hover:text-[var(--accent-blue)] transition-colors">About</a>
+            <a href="#experience" className="hover:text-[var(--accent-blue)] transition-colors">Experience</a>
+            <a href="#files" className="hover:text-[var(--accent-blue)] transition-colors">Files</a>
+            <a href="#contact" className="hover:text-[var(--accent-blue)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
-            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2" aria-label="Toggle dark mode">
+            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
               <Sun className="h-5 w-5 block dark:hidden" />
               <Moon className="h-5 w-5 hidden dark:block" />
             </button>
@@ -508,7 +396,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} width={520} height={520} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
+                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
               </div>
             </div>
           </div>
@@ -516,35 +404,34 @@ export default function Page() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
-        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--accent-blue)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
-            {/* Use secondary button for LinkedIn to create contrast */}
-            <a href={content.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+            <a href={content.linkedin}" target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noopener noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
         
-        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[color:var(--accent-green)]" />}>
+        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--accent-green)]" />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
-                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
+                <h3 className="text-3xl font-bold text-[var(--primary-orange)] font-header">{stat.value}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
         </Section>
         
-        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
+        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <ExperienceTimeline data={content.timeline} />
         </Section>
         
-        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--accent-blue)]" />}>
           <SkillsSection skillsData={content.skills} />
         </Section>
 
-        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
+        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--accent-green)]" />}>
           <div className="space-y-6">
             <PdfCard
               title="Resume"
@@ -561,7 +448,7 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
+        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
