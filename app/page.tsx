@@ -175,6 +175,7 @@ export default function Page() {
               <div className="flex gap-2 mt-4">
                 <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost">LinkedIn</a>
                 <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary">Schedule</a>
+                <a href="/api/qr?format=svg" download="sarthak-qr.svg" className="btn btn-ghost">Download QR</a>
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
