@@ -2,23 +2,22 @@
 
 import { useEffect, useState, useRef } from 'react'
 import {
-  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon,
-  Briefcase, Layers, BarChart2, FileText, BookOpen, Download
-} from 'lucide-react'
+  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download
+} from 'lucide-react';
 
-// Content data
+// Custom content data
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
   location: 'Bengaluru, India',
   email: 'mittal.sart@gmail.com',
-  phone: '+91 8073877696', // kept for vCard; not rendered directly
+  phone: '+91 8073877696',
   linkedin: 'https://www.linkedin.com/in/sarthakmittal115/',
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
   photoAlt: 'Sarthak Mittal composite portrait',
-  aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure-test assumptions and make performance visible.`,
+  aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
     { title: 'Years of Experience', value: '7+' },
     { title: 'Deals Closed', value: '15+' },
@@ -33,65 +32,172 @@ const content = {
     { name: 'Market Analysis', description: 'In-depth research of market trends and competitors.', proficiency: 'Advanced' },
   ],
   timeline: [
-    { company: 'PwC Deals', role: 'Consultant', duration: '2015-2018', description: 'Transaction diligence and valuation for private equity and corporate clients.' },
-    { company: 'Nitya Capital', role: 'Acquisitions & Value Creation', duration: '2018-2022', description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.' },
-    { company: 'OurEarth BioPlastics', role: 'Founder & Operator', duration: '2022-Present', description: 'Founded and scaled a sustainable bioplastics company, managing operations and fundraising.' }
+    {
+      company: 'PwC Deals',
+      role: 'Consultant',
+      duration: '2015-2018',
+      description: 'Transaction diligence and valuation for private equity and corporate clients.'
+    },
+    {
+      company: 'Nitya Capital',
+      role: 'Acquisitions & Value Creation',
+      duration: '2018-2022',
+      description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
+    },
+    {
+      company: 'OurEarth BioPlastics',
+      role: 'Founder & Operator',
+      duration: '2022-Present',
+      description: 'Founded and scaled a sustainable bioplastics company, managing operations and fundraising.'
+    }
   ]
-}
+};
 
-// Toast
+// Reusable components
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
-  if (!open) return null
-  const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300'
-  const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100'
-  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>
+  if (!open) return null;
+  const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
+  const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100';
+  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
 
-// Safe DynamicImage: default local asset; optional override via env var
-const DynamicImage = ({ altText, className }: { altText: string; className: string }) => {
-  const [imageUrl, setImageUrl] = useState('/images/portrait_composite.webp')
-  useEffect(() => {
-    const override = process.env.NEXT_PUBLIC_PORTRAIT_URL
-    if (override) setImageUrl(override)
-  }, [])
-  return <img src={imageUrl} alt={altText} className={className} />
-}
-
-// Section reveal
-const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement | null>(null)
+const DynamicImage = ({ altText, className }: { altText: string; className: string; }) => {
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') { setIsVisible(true); return }
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setIsVisible(true); observer.disconnect() }
-    }, { threshold: 0.1 })
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
+    const generateImage = async () => {
+      const prompt = "A professional and friendly-looking man with a warm smile, with a subtle, modern, energetic background. The image should be suitable for a dynamic executive profile page.";
+      
+      const payload = {
+        instances: { prompt: prompt },
+        parameters: { "sampleCount": 1 }
+      };
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+      let retries = 0;
+      const maxRetries = 5;
+      const baseDelay = 1000;
+
+      while (retries < maxRetries) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.status === 429) {
+            retries++;
+            const delay = baseDelay * Math.pow(2, retries);
+            console.log(`Rate limit exceeded. Retrying in ${delay}ms...`);
+            await new Promise(res => setTimeout(res, delay));
+            continue;
+          }
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result?.predictions?.[0]?.bytesBase64Encoded) {
+            const generatedUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+            setImageUrl(generatedUrl);
+            break;
+          } else {
+            throw new Error('Failed to generate image or invalid response structure.');
+          }
+        } catch (e) {
+          console.error('Fetch error:', e);
+          setError(true);
+          retries++;
+          const delay = baseDelay * Math.pow(2, retries);
+          console.log(`Fetch failed. Retrying in ${delay}ms...`);
+          await new Promise(res => setTimeout(res, delay));
+        }
+      }
+      setLoading(false);
+    };
+
+    generateImage();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={`${className} flex items-center justify-center bg-gray-200 dark:bg-gray-800`}>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (error || !imageUrl) {
+    return (
+      <img
+        src="https://placehold.co/520x520/e2e8f0/64748b?text=Image+Unavailable"
+        alt="Image could not be generated"
+        className={className}
+      />
+    );
+  }
 
   return (
-    <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-      {children}
-    </div>
-  )
-}
+    <img
+      src={imageUrl}
+      alt={altText}
+      className={`${className} transition-opacity duration-500 ease-in-out opacity-100`}
+    />
+  );
+};
 
-// Main
-export default function Page() {
-  const [copied, setCopied] = useState(false)
-  const [redirectUrl, setRedirectUrl] = useState<string>('')
-  const [submitting, setSubmitting] = useState(false)
-  const [toastOpen, setToastOpen] = useState(false)
-  const [toastKind, setToastKind] = useState<'success' | 'error'>('success')
-  const [toastMsg, setToastMsg] = useState('')
-  const [showResume, setShowResume] = useState(false)
-  const [showLetter, setShowLetter] = useState(false)
+const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`)
-  }, [])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+    >
+      {children}
+    </div>
+  );
+};
+
+export default function Page() {
+  const [copied, setCopied] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState<string>('');
+  const [submitting, setSubmitting] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastKind, setToastKind] = useState<'success' | 'error'>('success');
+  const [toastMsg, setToastMsg] = useState('');
+  const [showResume, setShowResume] = useState(false);
+  const [showLetter, setShowLetter] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`);
+  }, []);
 
   const downloadVCard = () => {
     const lines = [
@@ -101,69 +207,93 @@ export default function Page() {
       content.calendly ? `URL:${content.calendly}` : '',
       content.linkedin ? `X-SOCIALPROFILE;type=linkedin:${content.linkedin}` : '',
       `ADR;TYPE=WORK:;;${content.location};;;;`,'END:VCARD',
-    ].filter(Boolean).join('\n')
-    const a = document.createElement('a')
-    a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`
-    a.download = `${content.name.replace(/\s+/g, '-')}.vcf`
-    a.click()
-  }
+    ].filter(Boolean).join('\n');
+    const a = document.createElement('a');
+    a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`;
+    a.download = `${content.name.replace(/\s+/g, '-')}.vcf`;
+    a.click();
+  };
 
   const copyText = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true); setToastKind('success'); setToastMsg('Contact copied!'); setToastOpen(true)
-      setTimeout(() => { setCopied(false); setToastOpen(false) }, 2000)
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setToastKind('success');
+      setToastMsg('Contact copied!');
+      setToastOpen(true);
+      setTimeout(() => {
+        setCopied(false);
+        setToastOpen(false);
+      }, 2000);
     } catch {
-      setToastKind('error'); setToastMsg('Failed to copy contact.'); setToastOpen(true)
-      setTimeout(() => setToastOpen(false), 3000)
+      setToastKind('error');
+      setToastMsg('Failed to copy contact.');
+      setToastOpen(true);
+      setTimeout(() => setToastOpen(false), 3000);
     }
-  }
+  };
 
   const Form = () => {
-    const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || ''
+    const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || '';
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      if (!endpoint) { e.preventDefault(); setToastKind('error'); setToastMsg('Form submission is not configured.'); setToastOpen(true); return }
-      e.preventDefault()
-      const form = e.currentTarget
-      const data = new FormData(form)
-      data.set('_subject', 'New message from sarthak-digital-card')
-      data.set('_redirect', redirectUrl || '')
-      setSubmitting(true); setToastOpen(false)
-      try {
-        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
-        if (res.ok) { setToastKind('success'); setToastMsg('Sent! Redirecting…'); setToastOpen(true); form.reset(); setTimeout(() => { window.location.href = redirectUrl || '/' }, 800) }
-        else { throw new Error(await res.text() || 'Submission failed') }
-      } catch {
-        setToastKind('error'); setToastMsg('Something went wrong. Please try again.'); setToastOpen(true)
-      } finally {
-        setSubmitting(false); setTimeout(() => setToastOpen(false), 3000)
+      if (!endpoint) {
+        e.preventDefault();
+        setToastKind('error');
+        setToastMsg('Form submission is not configured.');
+        setToastOpen(true);
+        return;
       }
-    }
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = new FormData(form);
+      data.set('_subject', 'New message from sarthak-digital-card');
+      data.set('_redirect', redirectUrl || '');
+      setSubmitting(true); setToastOpen(false);
+      try {
+        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          setToastKind('success');
+          setToastMsg('Sent! Redirecting…');
+          setToastOpen(true);
+          form.reset();
+          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
+        } else {
+          throw new Error(await res.text() || 'Submission failed');
+        }
+      } catch {
+        setToastKind('error');
+        setToastMsg('Something went wrong. Please try again.');
+        setToastOpen(true);
+      } finally {
+        setSubmitting(false);
+        setTimeout(() => setToastOpen(false), 3000);
+      }
+    };
 
     return (
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
       </form>
-    )
-  }
+    );
+  };
 
-  const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon?: React.ReactNode }) => (
+  const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
         <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
-              <h2 className="text-2xl md:text-3xl font-semibold">{title}</h2>
+              <h2 className="text-2xl md:text-3xl font-semibold font-header">{title}</h2>
             </div>
             {action}
           </div>
@@ -171,12 +301,12 @@ export default function Page() {
         </div>
       </SectionWithAnimation>
     </section>
-  )
+  );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
     <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
+        <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
           <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
@@ -196,10 +326,10 @@ export default function Page() {
         </div>
       )}
     </div>
-  )
+  );
 
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
-    const [isHovered, setIsHovered] = useState(false)
+    const [isHovered, setIsHovered] = useState(false);
     return (
       <div className="relative">
         <span
@@ -215,59 +345,71 @@ export default function Page() {
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   const ExperienceTimeline = ({ data }: { data: { company: string, role: string, duration: string, description: string }[] }) => (
     <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
       {data.map((item, index) => (
         <div key={index} className="mb-8 last:mb-0 relative">
           <div className="absolute w-4 h-4 rounded-full bg-orange-500 -left-2 top-0 -translate-x-1/2"></div>
-          <h3 className="text-xl font-semibold text-orange-600 dark:text-orange-400">{item.company}</h3>
+          <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">{item.company}</h3>
           <p className="text-lg font-medium mt-1">{item.role}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">{item.duration}</p>
           <p className="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">{item.description}</p>
         </div>
       ))}
     </div>
-  )
+  );
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[var(--bg)] text-[var(--ink)]">
+    <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
       <style>{`
         :root {
           --primary-orange: #f97316;
           --accent-blue: #3b82f6;
           --accent-green: #22c55e;
-          --bg: #F4F1EA;         /* linen */
-          --card: #FFFFFF;
-          --ink: #0F172A;        /* high contrast body & headings */
-          --muted: #374151;      /* body copy */
-          --ring: 34 94 73;      /* rgb for focus ring */
+          --bg-light: #fdf2e9;
+          --card-light: #ffffff;
+          --ink-light: #1e293b;
+          --muted-light: #64748b;
+          --ring-light: #f97316;
+          --bg-dark: #121212;
+          --card-dark: #1f1f1f;
+          --ink-dark: #f0f0f0;
+          --muted-dark: #a1a1aa;
+          --ring-dark: #f97316;
         }
-        .animated-background {
-          background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
-          background-size: 400% 400%;
-          animation: gradient-shift 15s ease infinite;
-        }
+
         @keyframes gradient-shift {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-        body { scroll-behavior: smooth; }
+
+        body {
+          scroll-behavior: smooth;
+        }
+
+        .animated-background {
+          background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
+          background-size: 400% 400%;
+          animation: gradient-shift 15s ease infinite;
+        }
+
+        .card {
+          @apply bg-[color:var(--card)] shadow-sm;
+        }
       `}</style>
-
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
-
-      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]/70">
+      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-sm font-bold" style={{color: 'var(--ink)'}}>{content.name}</div>
+          <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#about" className="hover:text-[var(--accent-blue)] transition-colors">About</a>
-            <a href="#experience" className="hover:text-[var(--accent-blue)] transition-colors">Experience</a>
-            <a href="#files" className="hover:text-[var(--accent-blue)] transition-colors">Files</a>
-            <a href="#contact" className="hover:text-[var(--accent-blue)] transition-colors">Contact</a>
+            <a href="#about" className="hover:text-[color:var(--accent-blue)] transition-colors">About</a>
+            <a href="#experience" className="hover:text-[color:var(--accent-blue)] transition-colors">Experience</a>
+            <a href="#files" className="hover:text-[color:var(--accent-blue)] transition-colors">Files</a>
+            <a href="#contact" className="hover:text-[color:var(--accent-blue)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
@@ -284,8 +426,8 @@ export default function Page() {
           <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{color: 'var(--ink)'}}>{content.name}</h1>
-                <p className="mt-1" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
+                <p className="mt-1 font-subheader" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
                 <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
                 <div className="flex flex-wrap gap-3 mt-4 text-sm">
                   <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
@@ -301,30 +443,30 @@ export default function Page() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
-        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--accent-blue)]" />}>
-          <p className="leading-relaxed" style={{color: 'var(--muted)'}}>{content.aboutBio}</p>
+        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+          <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
             <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
-
-        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--accent-green)]" />}>
+        
+        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[color:var(--accent-green)]" />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
-                <h3 className="text-3xl font-bold text-[var(--primary-orange)]">{stat.value}</h3>
-                <p className="text-sm mt-1" style={{color: 'var(--muted)'}}>{stat.title}</p>
+                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
         </Section>
-
-        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
+        
+        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
           <ExperienceTimeline data={content.timeline} />
         </Section>
-
-        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--accent-blue)]" />}>
+        
+        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
           <div className="flex flex-wrap gap-2">
             {content.skills.map((skill, index) => (
               <SkillPill key={index} name={skill.name} description={skill.description} />
@@ -332,14 +474,24 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--accent-green)]" />}>
+        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
           <div className="space-y-6">
-            <PdfCard title="Resume" url={content.resumePdfUrl} expanded={showResume} onToggle={() => setShowResume(v => !v)} />
-            <PdfCard title="Cover Letter" url={content.coverLetterPdfUrl} expanded={showLetter} onToggle={() => setShowLetter(v => !v)} />
+            <PdfCard
+              title="Resume"
+              url={content.resumePdfUrl}
+              expanded={showResume}
+              onToggle={() => setShowResume(v => !v)}
+            />
+            <PdfCard
+              title="Cover Letter"
+              url={content.coverLetterPdfUrl}
+              expanded={showLetter}
+              onToggle={() => setShowLetter(v => !v)}
+            />
           </div>
         </Section>
 
-        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[var(--primary-orange)]" />}>
+        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
@@ -351,7 +503,7 @@ export default function Page() {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-medium mb-2" style={{color: 'var(--ink)'}}>Message me</h3>
+            <h3 className="text-lg font-medium mb-2 font-header" style={{color: 'var(--ink)'}}>Message me</h3>
             <Form />
           </div>
         </Section>
@@ -364,5 +516,5 @@ export default function Page() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
