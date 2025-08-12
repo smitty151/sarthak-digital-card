@@ -2,21 +2,15 @@
 
 /**
  * Main page component for Sarthak's digital contacts & resume site.
- * This file assembles all of the UI elements, including data definitions,
- * reusable components, and the top-level page component.
+ * This file assembles all UI elements and uses Tailwind CSS with CSS custom props
+ * so colours are consistent across light/dark modes controlled by the class toggle.
  */
 
 import { useEffect, useState, useRef } from 'react'
-import QRCode from 'qrcode'
 import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Custom content data
-//
-// This `content` object centralizes all of the editable data used on the page.
-// Update these values to change your name, title, contact details, biography,
-// quick stats, skills and experience timeline. Keeping this data separate
-// makes the rest of the component definitions purely presentational.
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Deals & Transformation | PE, VC, Consulting',
@@ -27,7 +21,7 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp', // Reverting to a static image
+  photo: '/images/portrait_pro.webp',
   photoAlt: 'Sarthak Mittal professional portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
@@ -99,19 +93,7 @@ const content = {
 
 // ---------------------------------------------------------------------------
 // Reusable components
-//
-// The following components encapsulate common UI patterns used across
-// the page. They are defined within the same file for simplicity, but could
-// easily be extracted to their own files. Each component is documented
-// so you can quickly see what it does and how it contributes to the layout.
-/**
- * Toast component
- *
- * A small floating notification used to inform the user of transient
- * status messages (e.g. copy success, form submission errors). When
- * `open` is false the component returns null and renders nothing.
- * The `kind` prop controls the background colour (success or error).
- */
+
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null;
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
@@ -119,16 +101,9 @@ function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'suc
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
 
-/**
- * SectionWithAnimation component
- *
- * Wraps any content in an intersection observer that fades the content in
- * and slides it upward as it scrolls into view. This subtle animation helps
- * draw the eye to each section of the page as the user scrolls.
- */
 const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -140,86 +115,67 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
       },
       { threshold: 0.1 }
     );
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
-    };
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-    >
+    <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       {children}
     </div>
   );
 };
 
-/**
- * Page component
- *
- * This is the top-level component for the digital contact page. It wires
- * together the stateful behaviours (copying, form submission, PDF toggles)
- * and composes the various reusable sections defined below. Most of the
- * layout is defined via Tailwind utility classes.
- */
-
-/* ---------- QRCard (helper) ---------- */
+/* ---------- QRCard (helper, compact; no npm dep) ---------- */
 function QRCard() {
-  const [png, setPng] = useState<string>('');
-  const [busy, setBusy] = useState(false);
-  const size = 280;
+  const [size, setSize] = useState(200);
+  const [url, setUrl] = useState('');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = `${window.location.origin}/api/vcard`; // scan to add contact
-    const opts = { width: size, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
-    setBusy(true);
-    QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
+    setUrl(`${window.location.origin}/api/vcard`);
+    const calc = () => setSize(window.innerWidth < 640 ? 180 : 220);
+    calc();
+    window.addEventListener('resize', calc);
+    return () => window.removeEventListener('resize', calc);
   }, []);
+
+  const qrSrc = url
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}&margin=1&color=111827&bgcolor=ffffff`
+    : '';
 
   return (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
-      <div className="flex items-start gap-6 flex-col sm:flex-row">
-        {/* White tile guarantees contrast in both themes */}
-        <div className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
-          {busy || !png ? (
-            <div className="h-[280px] w-[280px] flex items-center justify-center text-sm text-neutral-500">
+      <div className="flex items-center gap-4 sm:gap-6 flex-col sm:flex-row">
+        {/* White tile keeps QR crisp in both themes */}
+        <div className="shrink-0 rounded-xl p-2 sm:p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+          {qrSrc ? (
+            <img src={qrSrc} alt="QR to add contact" width={size} height={size} className="rounded" />
+          ) : (
+            <div className="h-[180px] w-[180px] sm:h-[220px] sm:w-[220px] flex items-center justify-center text-xs text-neutral-500">
               Generating…
             </div>
-          ) : (
-            <img src={png} alt="QR to add contact" width={size} height={size} className="rounded" />
           )}
         </div>
 
-        <div className="flex-1">
-          <h3 className="text-xl font-semibold mb-2">Share this page</h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
-            Scan to add my contact. You can also download the vCard directly.
+        <div className="flex-1 text-center sm:text-left">
+          <h3 className="text-lg md:text-xl font-semibold mb-1">Share this page</h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-3">
+            Scan to add my contact to your phone.
           </p>
-
-          <div className="flex flex-wrap gap-2">
-            <a href="/api/vcard" className="btn btn-secondary">Download vCard</a>
-            <button
-              className="btn btn-primary"
-              onClick={async () => {
-                try { await navigator.clipboard.writeText(`${window.location.origin}/api/vcard`); } catch {}
-              }}
-            >
-              <Copy className="h-4 w-4 mr-2" /> Copy vCard link
-            </button>
-          </div>
+          <button
+            className="btn btn-primary"
+            onClick={async () => {
+              try { await navigator.clipboard.writeText(url); } catch {}
+            }}
+          >
+            <Copy className="h-4 w-4 mr-2" /> Copy vCard link
+          </button>
         </div>
       </div>
     </div>
   );
 }
-
 
 export default function Page() {
   const [copied, setCopied] = useState(false);
@@ -235,13 +191,6 @@ export default function Page() {
     if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`);
   }, []);
 
-  /**
-   * downloadVCard
-   *
-   * Builds and triggers a download of a VCard (.vcf) file containing your
-   * contact information. This allows visitors to save your details directly
-   * to their address book from the site.
-   */
   const downloadVCard = () => {
     const lines = [
       'BEGIN:VCARD','VERSION:3.0',`N:Mittal;Sarthak;;;`,`FN:${content.name}`,
@@ -257,12 +206,6 @@ export default function Page() {
     a.click();
   };
 
-  /**
-   * copyText
-   *
-   * Copies the provided string to the clipboard and shows a toast. If the
-   * operation fails, an error toast is shown instead.
-   */
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -270,10 +213,7 @@ export default function Page() {
       setToastKind('success');
       setToastMsg('Contact copied!');
       setToastOpen(true);
-      setTimeout(() => {
-        setCopied(false);
-        setToastOpen(false);
-      }, 2000);
+      setTimeout(() => { setCopied(false); setToastOpen(false); }, 2000);
     } catch {
       setToastKind('error');
       setToastMsg('Failed to copy contact.');
@@ -282,15 +222,6 @@ export default function Page() {
     }
   };
 
-  /**
-   * Form component
-   *
-   * Renders the contact form. On submit, posts data to a Formspree endpoint
-   * defined in the NEXT_PUBLIC_FORMSPREE_ENDPOINT environment variable.
-   * Includes spam prevention (hidden `_gotcha` field) and shows toast
-   * notifications on success or failure. Redirects to the /thanks page after
-   * a brief delay on successful submission.
-   */
   const Form = () => {
     const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || '';
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -310,21 +241,16 @@ export default function Page() {
       try {
         const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
         if (res.ok) {
-          setToastKind('success');
-          setToastMsg('Sent! Redirecting…');
-          setToastOpen(true);
+          setToastKind('success'); setToastMsg('Sent! Redirecting…'); setToastOpen(true);
           form.reset();
           setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
         } else {
           throw new Error(await res.text() || 'Submission failed');
         }
       } catch {
-        setToastKind('error');
-        setToastMsg('Something went wrong. Please try again.');
-        setToastOpen(true);
+        setToastKind('error'); setToastMsg('Something went wrong. Please try again.'); setToastOpen(true);
       } finally {
-        setSubmitting(false);
-        setTimeout(() => setToastOpen(false), 3000);
+        setSubmitting(false); setTimeout(() => setToastOpen(false), 3000);
       }
     };
 
@@ -344,14 +270,6 @@ export default function Page() {
     );
   };
 
-  /**
-   * Section component
-   *
-   * Generic wrapper used to delineate different sections of the page (About,
-   * Quick Stats, Experience, Skills, Files, Contact). Accepts an id for
-   * linking, a title, optional actions (e.g. header buttons) and an icon.
-   * Wraps its content in SectionWithAnimation for fade-in on scroll.
-   */
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
@@ -369,25 +287,11 @@ export default function Page() {
     </section>
   );
 
-  /**
-   * PdfCard component
-   *
-   * Displays a card for a PDF document (e.g. Resume or Cover Letter) with
-   * actions to open the PDF in a new tab or expand an inline preview. When
-   * `expanded` is true, a Tailwind-styled <object> element is shown with the
-   * PDF embedded; otherwise only the header and buttons are visible.
-   */
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    // Card wrapper with its own tinted background and subtle border/shadow to
-    // distinguish the PDF cards from the surrounding section.  Note that
-    // we avoid placing JSX comments as standalone children, which would
-    // break the JSX parser and cause a compile error.  Instead, this
-    // description lives as a normal JavaScript comment.
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-[var(--bg)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          {/* Use secondary styling for better contrast against the section background */}
           <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
@@ -399,7 +303,7 @@ export default function Page() {
         </div>
       </div>
       {expanded && (
-        <div className="mt-4 pdf-frame">
+        <div className="mt-4 h-[72vh] min-h-[420px] rounded-xl overflow-hidden">
           <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
             <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noopener noreferrer">Open it in a new tab.</a></p>
           </object>
@@ -408,12 +312,6 @@ export default function Page() {
     </div>
   );
 
-  /**
-   * SkillPill component
-   *
-   * Renders a pill-shaped badge for a skill. On hover, shows a tooltip
-   * containing the description of the skill. Uses state to track hover.
-   */
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     return (
@@ -434,13 +332,6 @@ export default function Page() {
     );
   };
 
-  /**
-   * ExperienceTimeline component
-   *
-   * Displays a vertical timeline of job experiences. Each timeline entry
-   * includes the company name, role, duration and a description of the work.
-   * A coloured dot and connecting line visually join the entries.
-   */
   const ExperienceTimeline = ({ data }: { data: { company: string, role: string, duration: string, description: string }[] }) => (
     <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
       {data.map((item, index) => (
@@ -454,18 +345,10 @@ export default function Page() {
     </div>
   );
 
-  /**
-   * SkillsSection component
-   *
-   * Iterates over the categories in the skills data and renders a header
-   * followed by a set of SkillPill components for each skill in that category.
-   */
   const SkillsSection = ({ skillsData }: { skillsData: Record<string, { name: string; description: string }[]> }) => (
     <div className="space-y-6">
       {Object.keys(skillsData).map(category => (
         <div key={category}>
-          {/* Use a dark grey for skill category headings instead of the previous light blue
-             to improve contrast and maintain the Scandinavian aesthetic. */}
           <h3 className="text-lg font-bold font-header mb-2 text-[var(--muted)]">{category}</h3>
           <div className="flex flex-wrap gap-2">
             {skillsData[category].map((skill, index) => (
@@ -494,6 +377,22 @@ export default function Page() {
           --ink-dark: #f0f0f0;
           --muted-dark: #a1a1aa;
           --ring-dark: #f97316;
+
+          /* ✅ component mappings */
+          --bg: var(--bg-light);
+          --card: var(--card-light);
+          --ink: var(--ink-light);
+          --muted: var(--muted-light);
+          --ring: var(--ring-light);
+          --accent: var(--primary-orange);
+        }
+        .dark {
+          --bg: var(--bg-dark);
+          --card: var(--card-dark);
+          --ink: var(--ink-dark);
+          --muted: var(--muted-dark);
+          --ring: var(--ring-dark);
+          --accent: var(--primary-orange);
         }
 
         @keyframes gradient-shift {
@@ -502,20 +401,15 @@ export default function Page() {
           100% { background-position: 0% 50%; }
         }
 
-        body {
-          scroll-behavior: smooth;
-        }
-
+        body { scroll-behavior: smooth; }
         .animated-background {
           background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
           background-size: 400% 400%;
           animation: gradient-shift 15s ease infinite;
         }
-
-        .card {
-          @apply bg-[var(--card)] shadow-sm;
-        }
+        .card { @apply bg-[var(--card)] shadow-sm; }
       `}</style>
+
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -524,8 +418,8 @@ export default function Page() {
             <a href="#about" className="hover:text-[var(--accent)] transition-colors">About</a>
             <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
             <a href="#files" className="hover:text-[var(--accent)] transition-colors">Files</a>
-            <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
             <a href="#share" className="hover:text-[var(--accent)] transition-colors">Share</a>
+            <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
@@ -562,51 +456,40 @@ export default function Page() {
         <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
-            {/* Use secondary button for LinkedIn to create contrast */}
             <a href={content.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noopener noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
-        
+
         <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-[var(--bg)] p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
-                {/* Display the stat value in the primary accent colour for stronger contrast.
-                   The accent variable is defined in globals.css and adapts between
-                   light and dark modes. */}
                 <h3 className="text-3xl font-bold text-[var(--primary-orange)] font-header">{stat.value}</h3>
-                {/* Use the muted colour for stat labels so they remain readable without
-                   overpowering the value itself. */}
                 <p className="text-sm text-[var(--muted)] mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
         </Section>
-        
+
         <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <ExperienceTimeline data={content.timeline} />
         </Section>
-        
+
         <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <SkillsSection skillsData={content.skills} />
         </Section>
 
         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="space-y-6">
-            <PdfCard
-              title="Resume"
-              url={content.resumePdfUrl}
-              expanded={showResume}
-              onToggle={() => setShowResume(v => !v)}
-            />
-            <PdfCard
-              title="Cover Letter"
-              url={content.coverLetterPdfUrl}
-              expanded={showLetter}
-              onToggle={() => setShowLetter(v => !v)}
-            />
+            <PdfCard title="Resume" url={content.resumePdfUrl} expanded={showResume} onToggle={() => setShowResume(v => !v)} />
+            <PdfCard title="Cover Letter" url={content.coverLetterPdfUrl} expanded={showLetter} onToggle={() => setShowLetter(v => !v)} />
           </div>
+        </Section>
+
+        {/* Share inside <main> for consistent spacing */}
+        <Section id="share" title="Share" icon={<QrCode className="h-6 w-6 text-[var(--accent-blue)]" />}>
+          <QRCard />
         </Section>
 
         <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[var(--primary-orange)]" />}> 
@@ -626,11 +509,6 @@ export default function Page() {
           </div>
         </Section>
       </main>
-
-      {/*QR Code Section*/}
-        <Section id="share" title="Share" icon={<QrCode className="h-6 w-6 text-[var(--accent-blue)]" />}>
-         <QRCard />
-        </Section>
 
       <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8 mt-8 relative z-10">
         <div className="max-w-5xl mx-auto px-4 text-sm flex items-center justify-between" style={{color: 'var(--muted)'}}>

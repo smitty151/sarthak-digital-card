@@ -1,14 +1,11 @@
-// app/api/vcard/route.ts
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // Update these fields as needed:
   const name = 'Sarthak Mittal';
   const first = 'Sarthak';
   const last = 'Mittal';
   const email = 'mittal.sart@gmail.com';
-  // You said you don’t want phone visible on the site, but it’s fine in the vCard:
-  const phone = '+91 8073877696';
+  const phone = '+91 8073877696'; // included in vCard only
   const location = 'Bengaluru, India';
   const linkedin = 'https://www.linkedin.com/in/sarthakmittal115/';
   const calendly = 'https://calendly.com/mittal-sart/30min';
@@ -27,13 +24,11 @@ export async function GET() {
     'END:VCARD'
   ].filter(Boolean).join('\r\n');
 
-  const res = new NextResponse(vcard, {
+  return new NextResponse(vcard, {
     headers: {
-      // Correct MIME so iOS/Android recognize it:
       'Content-Type': 'text/vcard; charset=utf-8',
       'Content-Disposition': 'attachment; filename="Sarthak-Mittal.vcf"',
-      'Cache-Control': 'public, max-age=3600'
-    }
+      'Cache-Control': 'public, max-age=3600',
+    },
   });
-  return res;
 }
