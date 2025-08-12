@@ -295,7 +295,6 @@ export default function Page() {
     <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
       {data.map((item, index) => (
         <div key={index} className="mb-8 last:mb-0 relative">
-          <div className="absolute w-4 h-4 rounded-full bg-orange-500 -left-2 top-0 -translate-x-1/2"></div>
           <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">{item.company}</h3>
           <p className="text-lg font-medium mt-1">{item.role}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">{item.duration}</p>
