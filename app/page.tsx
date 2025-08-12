@@ -217,11 +217,11 @@ export default function Page() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -232,7 +232,7 @@ export default function Page() {
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
-        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
@@ -247,7 +247,7 @@ export default function Page() {
   );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border-none p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+    <div className="rounded-2xl p-4 md:p-5 bg-neutral-100 dark:bg-neutral-800 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
@@ -361,10 +361,6 @@ export default function Page() {
         .btn-secondary {
             @apply px-4 py-2 rounded-xl text-[color:var(--ink)] bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors duration-200 flex items-center justify-center;
         }
-        
-        .pdf-card-container {
-            @apply rounded-2xl p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out;
-        }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
@@ -388,7 +384,7 @@ export default function Page() {
 
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
+          <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
@@ -400,7 +396,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
+                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
               </div>
             </div>
           </div>
@@ -470,7 +466,7 @@ export default function Page() {
         </Section>
       </main>
 
-      <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8 mt-8 relative z-10">
+      <footer className="border-t border-neutral-200/70 dark:border-neutral-800/60 py-8 mt-8 relative z-10">
         <div className="max-w-5xl mx-auto px-4 text-sm flex items-center justify-between" style={{color: 'var(--muted)'}}>
           <div>© {new Date().getFullYear()} {content.name}. All rights reserved.</div>
           <div className="opacity-80">Built for quick sharing • Print-ready</div>
