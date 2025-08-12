@@ -16,39 +16,41 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photoAlt: 'Sarthak Mittal composite portrait',
+  photo: '/images/portrait_pro.webp', // Reverting to a static image
+  photoAlt: 'Sarthak Mittal professional portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
     { title: 'Years of Experience', value: '7+' },
     { title: 'Deals Closed', value: '15+' },
-    { title: 'Capital Deployed', value: '$200M+' },
+    { title: 'Capital Deployed', value: '$1.6B+' },
   ],
   skills: [
     { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.', proficiency: 'Expert' },
     { name: 'Transaction Diligence', description: 'Experience in due diligence for M&A and PE.', proficiency: 'Expert' },
     { name: 'Portfolio Management', description: 'Managing and optimizing asset portfolios.', proficiency: 'Advanced' },
     { name: 'Strategic Planning', description: 'Developing long-term business strategies.', proficiency: 'Advanced' },
-    { name: 'Transformation', description: 'Leading change management initiatives.', proficiency: 'Expert' },
-    { name: 'Market Analysis', description: 'In-depth research of market trends and competitors.', proficiency: 'Advanced' },
+    { name: 'Cost & Value Transformation', description: 'Implementing strategies to reduce costs and create value.', proficiency: 'Expert' },
+    { name: 'Synergy Tracking', description: 'Monitoring and reporting post-merger synergies.', proficiency: 'Advanced' },
+    { name: 'Operating Modeling', description: 'Creating operational models for business planning and forecasting.', proficiency: 'Advanced' },
   ],
   timeline: [
     {
       company: 'PwC Deals',
-      role: 'Consultant',
+      role: 'Transformation',
       duration: '2015-2018',
       description: 'Transaction diligence and valuation for private equity and corporate clients.'
     },
     {
-      company: 'Nitya Capital',
-      role: 'Acquisitions & Value Creation',
+      company: 'PwC',
+      role: 'Enterprise & Foundational Strategy',
       duration: '2018-2022',
-      description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
+      description: 'Developing and implementing strategies for enterprise growth and foundational initiatives.'
     },
     {
-      company: 'OurEarth BioPlastics',
-      role: 'Founder & Operator',
+      company: 'Nitya Capital',
+      role: 'Acquisitions & Value Creation',
       duration: '2022-Present',
-      description: 'Founded and scaled a sustainable bioplastics company, managing operations and fundraising.'
+      description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
     }
   ]
 };
@@ -60,96 +62,6 @@ function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'suc
   const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100';
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
-
-const DynamicImage = ({ altText, className }: { altText: string; className: string; }) => {
-  const [imageUrl, setImageUrl] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const generateImage = async () => {
-      const prompt = "A professional and friendly-looking man with a warm smile, with a subtle, modern, energetic background. The image should be suitable for a dynamic executive profile page.";
-      
-      const payload = {
-        instances: { prompt: prompt },
-        parameters: { "sampleCount": 1 }
-      };
-      const apiKey = "";
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-      let retries = 0;
-      const maxRetries = 5;
-      const baseDelay = 1000;
-
-      while (retries < maxRetries) {
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (response.status === 429) {
-            retries++;
-            const delay = baseDelay * Math.pow(2, retries);
-            console.log(`Rate limit exceeded. Retrying in ${delay}ms...`);
-            await new Promise(res => setTimeout(res, delay));
-            continue;
-          }
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const result = await response.json();
-
-          if (result?.predictions?.[0]?.bytesBase64Encoded) {
-            const generatedUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-            setImageUrl(generatedUrl);
-            break;
-          } else {
-            throw new Error('Failed to generate image or invalid response structure.');
-          }
-        } catch (e) {
-          console.error('Fetch error:', e);
-          setError(true);
-          retries++;
-          const delay = baseDelay * Math.pow(2, retries);
-          console.log(`Fetch failed. Retrying in ${delay}ms...`);
-          await new Promise(res => setTimeout(res, delay));
-        }
-      }
-      setLoading(false);
-    };
-
-    generateImage();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className={`${className} flex items-center justify-center bg-gray-200 dark:bg-gray-800`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-500 border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (error || !imageUrl) {
-    return (
-      <img
-        src="https://placehold.co/520x520/e2e8f0/64748b?text=Image+Unavailable"
-        alt="Image could not be generated"
-        className={className}
-      />
-    );
-  }
-
-  return (
-    <img
-      src={imageUrl}
-      alt={altText}
-      className={`${className} transition-opacity duration-500 ease-in-out opacity-100`}
-    />
-  );
-};
 
 const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -435,7 +347,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <DynamicImage altText={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
+                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
               </div>
             </div>
           </div>
