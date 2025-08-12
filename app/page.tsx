@@ -18,9 +18,22 @@ function Anchor({ href, children }: { href: string, children: React.ReactNode })
   return <a href={href} target="_blank" rel="noreferrer" className="underline decoration-dotted underline-offset-4 hover:decoration-solid">{children}</a>
 }
 
+function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
+  if (!open) return null
+  const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm'
+  const styles = kind === 'success'
+    ? 'bg-emerald-600 text-white'
+    : 'bg-rose-600 text-white'
+  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>
+}
+
 export default function Page() {
   const [copied, setCopied] = useState(false)
   const [redirectUrl, setRedirectUrl] = useState<string>('')
+  const [submitting, setSubmitting] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastKind, setToastKind] = useState<'success' | 'error'>('success')
+  const [toastMsg, setToastMsg] = useState('')
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -57,27 +70,64 @@ export default function Page() {
 
   const Form = () => {
     const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || ''
-    return (
-      <form
-        action={endpoint || '#'}
-        method="POST"
-        className="space-y-3"
-        onSubmit={(e) => {
-          if (!endpoint) { e.preventDefault(); alert('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT in Vercel to enable submissions.'); }
-        }}
-      >
-        {/* Hidden fields for Formspree behavior */}
-        <input type="hidden" name="_subject" value="New message from sarthak-digital-card" />
-        <input type="hidden" name="_redirect" value={redirectUrl || ''} />
-        <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      if (!endpoint) {
+        e.preventDefault()
+        alert('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT in Vercel to enable submissions.')
+        return
+      }
+      e.preventDefault()
+      const form = e.currentTarget
+      const data = new FormData(form)
+      // Hidden fields
+      data.set('_subject', 'New message from sarthak-digital-card')
+      data.set('_redirect', redirectUrl || '')
+      setSubmitting(true)
+      setToastOpen(false)
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' },
+        })
+        if (res.ok) {
+          setToastKind('success')
+          setToastMsg('Sent! Redirecting…')
+          setToastOpen(true)
+          form.reset()
+          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800)
+        } else {
+          const text = await res.text()
+          throw new Error(text || 'Submission failed')
+        }
+      } catch (err) {
+        setToastKind('error')
+        setToastMsg('Something went wrong. Please try again.')
+        setToastOpen(true)
+      } finally {
+        setSubmitting(false)
+        setTimeout(() => setToastOpen(false), 3000)
+      }
+    }
 
+    return (
+      <form onSubmit={onSubmit} className="space-y-3">
+        {/* Honeypot for spam */}
+        <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
           <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
           <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
         </div>
         <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
         <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
-        <button className="px-4 py-2 rounded-full bg-neutral-900 text-white hover:opacity-90">Send</button>
+        <button
+          className="px-4 py-2 rounded-full bg-neutral-900 text-white hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
+          aria-disabled={submitting}
+          disabled={submitting}
+        >
+          {submitting && <span className="inline-block h-4 w-4 rounded-full border-2 border-white/50 border-t-white animate-spin" />}
+          {submitting ? 'Sending…' : 'Send'}
+        </button>
         <p className="text-xs text-neutral-500">Or schedule directly: <Anchor href={content.calendly}>Calendly</Anchor></p>
       </form>
     )
@@ -85,6 +135,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-950 dark:to-neutral-900">
+      <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-white/70 dark:bg-neutral-950/60">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm text-neutral-600 dark:text-neutral-300">Digital Contacts</div>
