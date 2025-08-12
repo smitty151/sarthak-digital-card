@@ -1,11 +1,5 @@
 'use client'
 
-/**
- * Main page component for Sarthak's digital contacts & resume site.
- * This file assembles all UI elements and uses Tailwind CSS with CSS custom props
- * so colours are consistent across light/dark modes controlled by the class toggle.
- */
-
 import { useEffect, useState, useRef } from 'react'
 import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
 
@@ -93,7 +87,6 @@ const content = {
 
 // ---------------------------------------------------------------------------
 // Reusable components
-
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null;
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
@@ -126,7 +119,7 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-/* ---------- QRCard (helper, compact; no npm dep) ---------- */
+/* ---------- QRCard (compact; no npm dep) ---------- */
 function QRCard() {
   const [size, setSize] = useState(200);
   const [url, setUrl] = useState('');
@@ -147,7 +140,6 @@ function QRCard() {
   return (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
       <div className="flex items-center gap-4 sm:gap-6 flex-col sm:flex-row">
-        {/* White tile keeps QR crisp in both themes */}
         <div className="shrink-0 rounded-xl p-2 sm:p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
           {qrSrc ? (
             <img src={qrSrc} alt="QR to add contact" width={size} height={size} className="rounded" />
@@ -199,10 +191,10 @@ export default function Page() {
       content.calendly ? `URL:${content.calendly}` : '',
       content.linkedin ? `X-SOCIALPROFILE;type=linkedin:${content.linkedin}` : '',
       `ADR;TYPE=WORK:;;${content.location};;;;`,'END:VCARD',
-    ].filter(Boolean).join('\n');
+    ].filter(Boolean).join('\\n');
     const a = document.createElement('a');
     a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`;
-    a.download = `${content.name.replace(/\s+/g, '-')}.vcf`;
+    a.download = `${content.name.replace(/\\s+/g, '-')}.vcf`;
     a.click();
   };
 
@@ -312,12 +304,17 @@ export default function Page() {
     </div>
   );
 
+  // ✅ SkillPill with requested colours:
+  //    Light mode  -> dark grey pill
+  //    Dark mode   -> deep blue pill
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-[var(--bg)] px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-300 hover:scale-105
+                     bg-neutral-800 text-white hover:bg-neutral-700
+                     dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -378,7 +375,7 @@ export default function Page() {
           --muted-dark: #a1a1aa;
           --ring-dark: #f97316;
 
-          /* ✅ component mappings */
+          /* component mappings */
           --bg: var(--bg-light);
           --card: var(--card-light);
           --ink: var(--ink-light);
@@ -487,7 +484,6 @@ export default function Page() {
           </div>
         </Section>
 
-        {/* Share inside <main> for consistent spacing */}
         <Section id="share" title="Share" icon={<QrCode className="h-6 w-6 text-[var(--accent-blue)]" />}>
           <QRCard />
         </Section>
