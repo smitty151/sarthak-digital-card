@@ -4,20 +4,20 @@
 
 /* Higher-contrast Scandinavian theme */
 :root {
-  --bg: #F4F1EA;                 /* lighter linen */
+  --bg: #F4F1EA;              /* lighter linen */
   --card: #FFFFFF;
-  --ink: #0F172A;                /* slate-900 for strong contrast */
-  --muted: #374151;              /* gray-700 for body copy */
-  --accent: #225E49;             /* deeper forest green */
+  --ink: #0F172A;              /* slate-900 for strong contrast */
+  --muted: #374151;            /* gray-700 for body copy, improved contrast */
+  --accent: #225E49;           /* deeper forest green */
   --accent-ink: #FFFFFF;
-  --ring: 34 94 73;              /* r g b */
+  --ring: 34 94 73;            /* r g b */
 }
 
-.dark:root {
+.dark {
   --bg: #0B0D0C;
-  --card: #272c2a;
-  --ink: #E7E9EC;                /* nearly white for dark mode */
-  --muted: #CBD5E1;              /* slate-300 */
+  --card: #1f1f1f;
+  --ink: #E7E9EC;              /* nearly white for dark mode */
+  --muted: #A1A1AA;            /* slate-400, improved contrast */
   --accent: #2E7D60;
   --accent-ink: #FFFFFF;
   --ring: 46 125 96;
@@ -33,13 +33,14 @@ body::before {
   opacity: .10; z-index: 0;
 }
 
-.card { background-color: var(--accent); }
-.card { @apply border-none border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm; }
+/* Base card styling, borders removed for a cleaner look */
+.card { @apply bg-[color:var(--card)] rounded-2xl shadow-sm; }
 
+/* Custom buttons */
 .btn { @apply inline-flex items-center justify-center gap-2 rounded-full text-sm px-4 py-2 transition; }
-.btn-ghost { background-color: var(--muted); color: var(--accent-ink);  hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
-.btn-primary { background-color: var(--accent); color: var(--accent-ink); }
-.btn-primary:hover { opacity: .94; }
+.btn-ghost { @apply bg-transparent text-[color:var(--ink)] hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
+.btn-primary { @apply bg-[color:var(--accent)] text-[color:var(--accent-ink)] hover:opacity-90; }
+.btn-secondary { @apply bg-neutral-200 dark:bg-neutral-800 text-[color:var(--ink)] hover:bg-neutral-300 dark:hover:bg-neutral-700; }
 
 a.link { text-decoration: underline dotted; text-underline-offset: 4px; }
 a.link:hover { text-decoration-style: solid; }
@@ -48,7 +49,9 @@ a.link:hover { text-decoration-style: solid; }
 p, .copy { color: var(--muted); }
 h1, h2, h3, h4 { color: var(--ink); }
 
-.pdf-frame { @apply border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden; height: 52vh; }
+/* Removed border from pdf frame */
+.pdf-frame { @apply rounded-xl overflow-hidden; height: 52vh; }
 @media (min-width: 768px) { .pdf-frame { height: 48vh; } }
 
-.photo { @apply border border-neutral-200 dark:border-neutral-800 shadow-md; }
+/* Removed border from photo */
+.photo { @apply rounded-2xl shadow-md; }
