@@ -22,17 +22,48 @@ const content = {
   quickStats: [
     { title: 'Years of Experience', value: '7+' },
     { title: 'Deals Closed', value: '15+' },
-    { title: 'Capital Deployed', value: '$1.6B+' },
+    { title: 'Capital Deployed', value: '$1.6 billion+' },
   ],
-  skills: [
-    { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.', proficiency: 'Expert' },
-    { name: 'Transaction Diligence', description: 'Experience in due diligence for M&A and PE.', proficiency: 'Expert' },
-    { name: 'Portfolio Management', description: 'Managing and optimizing asset portfolios.', proficiency: 'Advanced' },
-    { name: 'Strategic Planning', description: 'Developing long-term business strategies.', proficiency: 'Advanced' },
-    { name: 'Cost & Value Transformation', description: 'Implementing strategies to reduce costs and create value.', proficiency: 'Expert' },
-    { name: 'Synergy Tracking', description: 'Monitoring and reporting post-merger synergies.', proficiency: 'Advanced' },
-    { name: 'Operating Modeling', description: 'Creating operational models for business planning and forecasting.', proficiency: 'Advanced' },
-  ],
+  skills: {
+    'Finance & Deals': [
+      { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.' },
+      { name: 'Valuation', description: 'DCF, LBO, NAV, Waterfall' },
+      { name: 'Synergy Modeling', description: 'Assessing and modeling post-merger synergies.' },
+      { name: 'Due Diligence', description: 'CDD/ODD/IDD' },
+      { name: 'Portfolio/Asset Management', description: 'Optimizing and managing asset portfolios.' },
+      { name: 'PMO/IMO/SMO', description: 'Program, Integration, and Separation Management Office.' },
+    ],
+    'Analytics & BI': [
+      { name: 'Advanced Excel & VBA', description: 'Complex data analysis and automation.' },
+      { name: 'Tableau', description: 'Data visualization and dashboard design.' },
+      { name: 'SQL', description: 'Querying and managing relational databases.' },
+      { name: 'Data Modeling', description: 'Designing efficient database structures.' },
+    ],
+    'Programming': [
+      { name: 'Python', description: 'Familiarity for analysis and automation.' },
+      { name: 'R', description: 'Working knowledge for statistical analysis.' },
+      { name: 'Java/C++', description: 'Foundational programming knowledge.' },
+    ],
+    'Data/Systems': [
+      { name: 'Bloomberg', description: 'Terminal for market data and analysis.' },
+      { name: 'FactSet', description: 'Data and analytics for financial professionals.' },
+      { name: 'SAP', description: 'Enterprise resource planning software.' },
+      { name: 'Data Management & Governance', description: 'Ensuring data quality and integrity.' },
+    ],
+    'Strategy & Execution': [
+      { name: 'Operating Model & TOM', description: 'Designing Target Operating Models.' },
+      { name: 'KPI Trees & Benefits Tracking', description: 'Defining and tracking key performance indicators.' },
+      { name: 'Program/Project Management', description: 'Leading and overseeing strategic projects.' },
+      { name: 'Stakeholder Management', description: 'Engaging with and managing key stakeholders.' },
+      { name: 'Agile', description: 'Familiarity with agile methodologies.' },
+    ],
+    'Communication': [
+      { name: 'Executive Storytelling', description: 'Crafting compelling narratives for senior leadership.' },
+      { name: 'Memo Writing', description: 'Producing concise and impactful memos.' },
+      { name: 'IC Materials', description: 'Preparing materials for investment committees.' },
+      { name: 'Client Presentations', description: 'Delivering professional presentations to clients.' },
+    ],
+  },
   timeline: [
     {
       company: 'PwC Deals',
@@ -274,6 +305,21 @@ export default function Page() {
     </div>
   );
 
+  const SkillsSection = ({ skillsData }: { skillsData: Record<string, { name: string; description: string }[]> }) => (
+    <div className="space-y-6">
+      {Object.keys(skillsData).map(category => (
+        <div key={category}>
+          <h3 className="text-lg font-bold font-header mb-2 text-blue-600 dark:text-blue-400">{category}</h3>
+          <div className="flex flex-wrap gap-2">
+            {skillsData[category].map((skill, index) => (
+              <SkillPill key={index} name={skill.name} description={skill.description} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
       <style>{`
@@ -347,7 +393,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
+                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
               </div>
             </div>
           </div>
@@ -379,11 +425,7 @@ export default function Page() {
         </Section>
         
         <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
-          <div className="flex flex-wrap gap-2">
-            {content.skills.map((skill, index) => (
-              <SkillPill key={index} name={skill.name} description={skill.description} />
-            ))}
-          </div>
+          <SkillsSection skillsData={content.skills} />
         </Section>
 
         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
