@@ -525,7 +525,7 @@ export default function Page() {
             <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
             <a href="#files" className="hover:text-[var(--accent)] transition-colors">Files</a>
             <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
-            <a href="#share" …>Share</a>
+            <a href="#share" className="hover:text-[var(--accent)] transition-colors">Share</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
