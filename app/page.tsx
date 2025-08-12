@@ -20,7 +20,7 @@ import {
 // makes the rest of the component definitions purely presentational.
 const content = {
   name: 'Sarthak Mittal',
-  title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
+  title: 'Strategy, Deals & Transformation | PE, VC, Consulting',
   location: 'Bengaluru, India',
   email: 'mittal.sart@gmail.com',
   phone: '+91 8073877696',
