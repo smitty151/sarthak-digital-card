@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useState, useRef } from 'react'
+import QRCode from 'qrcode'
 import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
@@ -168,130 +169,57 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
  * layout is defined via Tailwind utility classes.
  */
 
-// --- QR Card: generates a theme-aware QR with download actions ---
-import QRCode from 'qrcode';
-
-function useIsDark() {
-  const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
-    const root = document.documentElement;
-    const update = () => setIsDark(root.classList.contains('dark'));
-    update();
-    const obs = new MutationObserver(update);
-    obs.observe(root, { attributes: true, attributeFilter: ['class'] });
-    return () => obs.disconnect();
-  }, []);
-  return isDark;
-}
-
+/* ---------- QRCard (helper) ---------- */
 function QRCard() {
-  const isDark = useIsDark();
-  const [siteUrl, setSiteUrl] = useState<string>('');
-  const [pngDataUrl, setPngDataUrl] = useState<string>('');
-  const [svgMarkup, setSvgMarkup] = useState<string>('');
-  const [size, setSize] = useState<number>(280);
+  const [png, setPng] = useState<string>('');
   const [busy, setBusy] = useState(false);
+  const size = 280;
 
   useEffect(() => {
-  // inside QRCard useEffect:
-  if (typeof window !== 'undefined') {
-    setSiteUrl(`${window.location.origin}/api/vcard`); // was just origin before
-  }}, []);
-
-  useEffect(() => {
-    if (!siteUrl) return;
+    if (typeof window === 'undefined') return;
+    const url = `${window.location.origin}/api/vcard`; // scan to add contact
+    const opts = { width: size, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
     setBusy(true);
-    const colorDark = '#111827';   // dark slate
-    const colorLight = '#FFFFFF';  // white background for the QR itself
-
-    const opts = { width: size, margin: 2, color: { dark: colorDark, light: colorLight } };
-
-    Promise.all([
-      QRCode.toDataURL(siteUrl, opts),                  // PNG
-      QRCode.toString(siteUrl, { ...opts, type: 'svg' })// SVG
-    ]).then(([png, svg]) => {
-      setPngDataUrl(png);
-      setSvgMarkup(svg);
-    }).finally(() => setBusy(false));
-  }, [siteUrl, isDark, size]);
-
-  const dlPNG = () => {
-    if (!pngDataUrl) return;
-    const a = document.createElement('a');
-    a.href = pngDataUrl;
-    a.download = 'sarthak-qr.png';
-    a.click();
-  };
-
-  const dlSVG = () => {
-    if (!svgMarkup) return;
-    const blob = new Blob([svgMarkup], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sarthak-qr.svg';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 500);
-  };
-
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(siteUrl);
-      alert('Link copied!');
-    } catch { alert('Could not copy link'); }
-  };
+    QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
+  }, []);
 
   return (
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--bg)] shadow-sm">
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
       <div className="flex items-start gap-6 flex-col sm:flex-row">
-        <div className="shrink-0 rounded-xl p-3 bg-neutral-100 dark:bg-[var(--bg)]">
-          {busy || !pngDataUrl ? (
-            <div className="h-[280px] w-[280px] flex items-center justify-center text-sm text-neutral-500">Generating…</div>
+        {/* White tile guarantees contrast in both themes */}
+        <div className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+          {busy || !png ? (
+            <div className="h-[280px] w-[280px] flex items-center justify-center text-sm text-neutral-500">
+              Generating…
+            </div>
           ) : (
-            <img
-              src={pngDataUrl}
-              alt="QR code to this site"
-              width={size}
-              height={size}
-              className="rounded-md"
-            />
+            <img src={png} alt="QR to add contact" width={size} height={size} className="rounded" />
           )}
         </div>
 
         <div className="flex-1">
           <h3 className="text-xl font-semibold mb-2">Share this page</h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
-            Scan to view on mobile, or download a high-quality QR for resumes, email signatures, or printed cards.
+            Scan to add my contact. You can also download the vCard directly.
           </p>
 
           <div className="flex flex-wrap gap-2">
-            <button onClick={dlPNG} className="btn btn-secondary">
-              <Download className="h-4 w-4 mr-2" /> Download PNG
+            <a href="/api/vcard" className="btn btn-secondary">Download vCard</a>
+            <button
+              className="btn btn-primary"
+              onClick={async () => {
+                try { await navigator.clipboard.writeText(`${window.location.origin}/api/vcard`); } catch {}
+              }}
+            >
+              <Copy className="h-4 w-4 mr-2" /> Copy vCard link
             </button>
-            <button onClick={dlSVG} className="btn btn-ghost">
-              <Download className="h-4 w-4 mr-2" /> Download SVG
-            </button>
-            <button onClick={copyLink} className="btn btn-primary">
-              <Copy className="h-4 w-4 mr-2" /> Copy link
-            </button>
-          </div>
-
-          <div className="mt-4 flex items-center gap-3">
-            <label className="text-sm text-neutral-600 dark:text-neutral-300">Size</label>
-            <input
-              type="range"
-              min={180}
-              max={360}
-              value={size}
-              onChange={(e) => setSize(parseInt(e.target.value, 10))}
-              className="w-48"
-            />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 export default function Page() {
   const [copied, setCopied] = useState(false);
