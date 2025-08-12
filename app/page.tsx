@@ -217,11 +217,11 @@ export default function Page() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -232,7 +232,7 @@ export default function Page() {
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
-        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
@@ -251,7 +251,7 @@ export default function Page() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost"><Download className="h-4 w-4 mr-2" />Open PDF</a>
+          <a href={url} target="_blank" rel="noreferrer" className="btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
               <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
@@ -358,6 +358,10 @@ export default function Page() {
         .card {
           @apply bg-[color:var(--card)] shadow-sm;
         }
+        
+        .btn-secondary {
+            @apply px-4 py-2 rounded-xl text-[color:var(--ink)] bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors duration-200 flex items-center justify-center;
+        }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
@@ -381,14 +385,14 @@ export default function Page() {
 
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
                 <p className="mt-1 font-subheader" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
                 <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
                 <div className="flex flex-wrap gap-3 mt-4 text-sm">
-                  <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+                  <a className="btn-secondary" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
                   <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary"><Copy className="h-4 w-4 mr-2" />{copied ? 'Copied!' : 'Copy Contact'}</button>
                 </div>
               </div>
@@ -404,7 +408,7 @@ export default function Page() {
         <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
-            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
