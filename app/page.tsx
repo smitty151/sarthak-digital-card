@@ -324,9 +324,8 @@ export default function Page() {
    * actions to open the PDF in a new tab or expand an inline preview. When
    * `expanded` is true, a Tailwind-styled <object> element is shown with the
    * PDF embedded; otherwise only the header and buttons are visible.
-   */
+   * Tinted background and subtle border/shadow to distinguish the card from its section */
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    {/* Tinted background and subtle border/shadow to distinguish the card from its section */}
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
