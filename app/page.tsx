@@ -324,8 +324,13 @@ export default function Page() {
    * actions to open the PDF in a new tab or expand an inline preview. When
    * `expanded` is true, a Tailwind-styled <object> element is shown with the
    * PDF embedded; otherwise only the header and buttons are visible.
-   * Tinted background and subtle border/shadow to distinguish the card from its section */
+   */
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
+    // Card wrapper with its own tinted background and subtle border/shadow to
+    // distinguish the PDF cards from the surrounding section.  Note that
+    // we avoid placing JSX comments as standalone children, which would
+    // break the JSX parser and cause a compile error.  Instead, this
+    // description lives as a normal JavaScript comment.
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
@@ -342,8 +347,8 @@ export default function Page() {
         </div>
       </div>
       {expanded && (
-        <div className="mt-4 h-[72vh] min-h-[420px] rounded-xl overflow-hidden">
-          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full rounded-xl">
+        <div className="mt-4 pdf-frame">
+          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
             <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noopener noreferrer">Open it in a new tab.</a></p>
           </object>
         </div>
@@ -407,7 +412,9 @@ export default function Page() {
     <div className="space-y-6">
       {Object.keys(skillsData).map(category => (
         <div key={category}>
-          <h3 className="text-lg font-bold font-header mb-2 text-blue-600 dark:text-blue-400">{category}</h3>
+          {/* Use a dark grey for skill category headings instead of the previous light blue
+             to improve contrast and maintain the Scandinavian aesthetic. */}
+          <h3 className="text-lg font-bold font-header mb-2 text-[color:var(--muted)]">{category}</h3>
           <div className="flex flex-wrap gap-2">
             {skillsData[category].map((skill, index) => (
               <SkillPill key={index} name={skill.name} description={skill.description} />
@@ -419,7 +426,7 @@ export default function Page() {
   );
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[var(--bg)] text-[color:var(--ink)]">
+    <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
       <style>{`
         :root {
           --primary-orange: #f97316;
@@ -435,23 +442,6 @@ export default function Page() {
           --ink-dark: #f0f0f0;
           --muted-dark: #a1a1aa;
           --ring-dark: #f97316;
-        }
-
-        /* Map tokens to working CSS vars used by components */
-        :root {
-          --bg: var(--bg-light);
-          --card: var(--card-light);
-          --ink: var(--ink-light);
-          --muted: var(--muted-light);
-          --ring: var(--ring-light);
-        }
-        .dark {
-          --bg: var(--bg-dark);
-          --card: var(--card-dark);
-          --ink: var(--ink-dark);
-          --muted: var(--muted-dark);
-          --ring: var(--ring-dark);
-        }
         }
 
         @keyframes gradient-shift {
@@ -475,17 +465,17 @@ export default function Page() {
         }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
-      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]/70">
+      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#about" className="hover:text-[color:var(--accent-blue)] transition-colors">About</a>
-            <a href="#experience" className="hover:text-[color:var(--accent-blue)] transition-colors">Experience</a>
-            <a href="#files" className="hover:text-[color:var(--accent-blue)] transition-colors">Files</a>
-            <a href="#contact" className="hover:text-[color:var(--accent-blue)] transition-colors">Contact</a>
+            <a href="#about" className="hover:text-[color:var(--accent)] transition-colors">About</a>
+            <a href="#experience" className="hover:text-[color:var(--accent)] transition-colors">Experience</a>
+            <a href="#files" className="hover:text-[color:var(--accent)] transition-colors">Files</a>
+            <a href="#contact" className="hover:text-[color:var(--accent)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
-            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2" aria-label="Toggle dark mode">
+            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
               <Sun className="h-5 w-5 block dark:hidden" />
               <Moon className="h-5 w-5 hidden dark:block" />
             </button>
@@ -508,7 +498,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} width={520} height={520} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
+                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
               </div>
             </div>
           </div>
@@ -529,8 +519,13 @@ export default function Page() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
-                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
+                {/* Display the stat value in the primary accent colour for stronger contrast.
+                   The accent variable is defined in globals.css and adapts between
+                   light and dark modes. */}
+                <h3 className="text-3xl font-bold text-[color:var(--accent)] font-header">{stat.value}</h3>
+                {/* Use the muted colour for stat labels so they remain readable without
+                   overpowering the value itself. */}
+                <p className="text-sm text-[color:var(--muted)] mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
