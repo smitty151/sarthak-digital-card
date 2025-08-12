@@ -493,7 +493,7 @@ export default function Page() {
                 <p className="mt-1 font-subheader" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
                 <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
                 <div className="flex flex-wrap gap-3 mt-4 text-sm">
-                  <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+                  <a className="btn btn-secondary" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
                   <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary"><Copy className="h-4 w-4 mr-2" />{copied ? 'Copied!' : 'Copy Contact'}</button>
                 </div>
               </div>
