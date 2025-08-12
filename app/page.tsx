@@ -7,9 +7,7 @@
  */
 
 import { useEffect, useState, useRef } from 'react'
-import {
-  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode
-} from 'lucide-react';
+import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Custom content data
@@ -244,9 +242,9 @@ function QRCard() {
   };
 
   return (
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--bg)] shadow-sm">
       <div className="flex items-start gap-6 flex-col sm:flex-row">
-        <div className="shrink-0 rounded-xl p-3 bg-neutral-100 dark:bg-neutral-800">
+        <div className="shrink-0 rounded-xl p-3 bg-neutral-100 dark:bg-[var(--bg)]">
           {busy || !pngDataUrl ? (
             <div className="h-[280px] w-[280px] flex items-center justify-center text-sm text-neutral-500">Generating…</div>
           ) : (
@@ -406,11 +404,11 @@ export default function Page() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[var(--bg)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[var(--bg)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[var(--bg)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[var(--bg)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -457,7 +455,7 @@ export default function Page() {
     // we avoid placing JSX comments as standalone children, which would
     // break the JSX parser and cause a compile error.  Instead, this
     // description lives as a normal JavaScript comment.
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-[var(--bg)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
@@ -493,7 +491,7 @@ export default function Page() {
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-[var(--bg)] px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -540,7 +538,7 @@ export default function Page() {
         <div key={category}>
           {/* Use a dark grey for skill category headings instead of the previous light blue
              to improve contrast and maintain the Scandinavian aesthetic. */}
-          <h3 className="text-lg font-bold font-header mb-2 text-[color:var(--muted)]">{category}</h3>
+          <h3 className="text-lg font-bold font-header mb-2 text-[var(--muted)]">{category}</h3>
           <div className="flex flex-wrap gap-2">
             {skillsData[category].map((skill, index) => (
               <SkillPill key={index} name={skill.name} description={skill.description} />
@@ -587,11 +585,11 @@ export default function Page() {
         }
 
         .card {
-          @apply bg-[color:var(--card)] shadow-sm;
+          @apply bg-[var(--card)] shadow-sm;
         }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
-      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
+      <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
@@ -645,14 +643,14 @@ export default function Page() {
         <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
-              <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-neutral-50 dark:bg-[var(--bg)] p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
                 {/* Display the stat value in the primary accent colour for stronger contrast.
                    The accent variable is defined in globals.css and adapts between
                    light and dark modes. */}
-                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
+                <h3 className="text-3xl font-bold text-[var(--primary-orange)] font-header">{stat.value}</h3>
                 {/* Use the muted colour for stat labels so they remain readable without
                    overpowering the value itself. */}
-                <p className="text-sm text-[color:var(--muted)] mt-1">{stat.title}</p>
+                <p className="text-sm text-[var(--muted)] mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
