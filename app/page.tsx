@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const content = {
   name: 'Sarthak Mittal',
@@ -20,6 +20,13 @@ function Anchor({ href, children }: { href: string, children: React.ReactNode })
 
 export default function Page() {
   const [copied, setCopied] = useState(false)
+  const [redirectUrl, setRedirectUrl] = useState<string>('')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setRedirectUrl(`${window.location.origin}/thanks`)
+    }
+  }, [])
 
   const downloadVCard = () => {
     const lines = [
@@ -51,9 +58,19 @@ export default function Page() {
   const Form = () => {
     const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || ''
     return (
-      <form action={endpoint || '#'} method="POST" className="space-y-3" onSubmit={(e) => {
-        if (!endpoint) { e.preventDefault(); alert('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT to enable form submissions.'); }
-      }}>
+      <form
+        action={endpoint || '#'}
+        method="POST"
+        className="space-y-3"
+        onSubmit={(e) => {
+          if (!endpoint) { e.preventDefault(); alert('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT in Vercel to enable submissions.'); }
+        }}
+      >
+        {/* Hidden fields for Formspree behavior */}
+        <input type="hidden" name="_subject" value="New message from sarthak-digital-card" />
+        <input type="hidden" name="_redirect" value={redirectUrl || ''} />
+        <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
+
         <div className="grid md:grid-cols-2 gap-3">
           <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
           <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900" />
