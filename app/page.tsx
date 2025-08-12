@@ -426,7 +426,7 @@ export default function Page() {
   );
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
+    <div className="min-h-screen relative overflow-hidden bg-[var(--bg)] text-[var(--ink)]">
       <style>{`
         :root {
           --primary-orange: #f97316;
@@ -469,10 +469,10 @@ export default function Page() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#about" className="hover:text-[color:var(--accent)] transition-colors">About</a>
-            <a href="#experience" className="hover:text-[color:var(--accent)] transition-colors">Experience</a>
-            <a href="#files" className="hover:text-[color:var(--accent)] transition-colors">Files</a>
-            <a href="#contact" className="hover:text-[color:var(--accent)] transition-colors">Contact</a>
+            <a href="#about" className="hover:text-[var(--accent)] transition-colors">About</a>
+            <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
+            <a href="#files" className="hover:text-[var(--accent)] transition-colors">Files</a>
+            <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
@@ -506,7 +506,7 @@ export default function Page() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
-        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--accent-blue)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
             {/* Use secondary button for LinkedIn to create contrast */}
@@ -515,31 +515,31 @@ export default function Page() {
           </div>
         </Section>
         
-        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[color:var(--accent-green)]" />}>
+        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--accent-green)]" />}> 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
                 {/* Display the stat value in the primary accent colour for stronger contrast.
                    The accent variable is defined in globals.css and adapts between
                    light and dark modes. */}
-                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
+                <h3 className="text-3xl font-bold text-[color:var(--accent)] font-header">{stat.value}</h3>
                 {/* Use the muted colour for stat labels so they remain readable without
                    overpowering the value itself. */}
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
+                <p className="text-sm text-[color:var(--muted)] mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
         </Section>
         
-        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
+        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <ExperienceTimeline data={content.timeline} />
         </Section>
         
-        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--accent-blue)]" />}> 
           <SkillsSection skillsData={content.skills} />
         </Section>
 
-        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
+        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--accent-green)]" />}> 
           <div className="space-y-6">
             <PdfCard
               title="Resume"
@@ -556,7 +556,7 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
+        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
