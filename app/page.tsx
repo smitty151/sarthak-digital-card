@@ -137,7 +137,7 @@ export default function Page() {
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-sm text-neutral-600 dark:text-neutral-300">Digital Contacts</div>
+          <div className="text-sm text-neutral-600 dark:text-neutral-300">Executive Profile</div>
           <nav className="hidden md:flex gap-6 text-sm">
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#resume" className="hover:opacity-80">Resume</a>
