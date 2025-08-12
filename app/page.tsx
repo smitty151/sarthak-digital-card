@@ -515,7 +515,7 @@ export default function Page() {
           </div>
         </Section>
         
-        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--accent-green)]" />}> 
+        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
               <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
