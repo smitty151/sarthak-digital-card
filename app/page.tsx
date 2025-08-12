@@ -276,7 +276,7 @@ export default function Page() {
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-110 hover:bg-blue-200 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-102 hover:bg-blue-200 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
