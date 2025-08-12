@@ -66,22 +66,22 @@ const content = {
   },
   timeline: [
     {
-      company: 'PwC Deals',
-      role: 'Transformation',
-      duration: '2015-2018',
-      description: 'Transaction diligence and valuation for private equity and corporate clients.'
+      company: 'PwC',
+      role: 'Enterprise & Foundational Strategy',
+      duration: '2025-Present',
+      description: 'Translate strategy into execution via pilot playbooks, KPI trees, TOM/RACI, and cadence/RAID governance.'
     },
     {
       company: 'PwC',
-      role: 'Enterprise & Foundational Strategy',
-      duration: '2018-2022',
-      description: 'Developing and implementing strategies for enterprise growth and foundational initiatives.'
+      role: 'Deals Transformation',
+      duration: '2022-2024',
+      description: 'Delivered and instituted playbooks for due diligence, integration management offices (IMO), and separation management offices (SMO).'
     },
     {
       company: 'Nitya Capital',
       role: 'Acquisitions & Value Creation',
-      duration: '2022-Present',
-      description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
+      duration: '2017-2022',
+      description: 'Sourced, underwrote, and onboarded real estate acquisitions; led value creation initiatives across the portfolio through targeted KPIs and risk-based sampling.'
     }
   ]
 };
