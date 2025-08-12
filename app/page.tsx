@@ -8,7 +8,7 @@ import {
 // Custom content data
 const content = {
   name: 'Sarthak Mittal',
-  title: 'Strategy, Investments & Transformation | PE / IB | Consulting',
+  title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
   location: 'Bengaluru, India',
   email: 'mittal.sart@gmail.com',
   phone: '+91 8073877696',
@@ -16,72 +16,39 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp',
-  photoAlt: 'Sarthak Mittal professional portrait',
+  photoAlt: 'Sarthak Mittal composite portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
     { title: 'Years of Experience', value: '7+' },
     { title: 'Deals Closed', value: '15+' },
-    { title: 'Capital Deployed', value: '$1.6 billion+' },
+    { title: 'Capital Deployed', value: '$200M+' },
   ],
-  skills: {
-    'Finance & Deals': [
-      { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.' },
-      { name: 'Valuation', description: 'DCF, LBO, NAV, Waterfall' },
-      { name: 'Synergy Modeling', description: 'Assessing and modeling post-merger synergies.' },
-      { name: 'Due Diligence', description: 'CDD/ODD/IDD' },
-      { name: 'Portfolio/Asset Management', description: 'Optimizing and managing asset portfolios.' },
-      { name: 'PMO/IMO/SMO', description: 'Program, Integration, and Separation Management Office.' },
-    ],
-    'Analytics & BI': [
-      { name: 'Advanced Excel & VBA', description: 'Complex data analysis and automation.' },
-      { name: 'Tableau', description: 'Data visualization and dashboard design.' },
-      { name: 'SQL', description: 'Querying and managing relational databases.' },
-      { name: 'Data Modeling', description: 'Designing efficient database structures.' },
-    ],
-    'Programming': [
-      { name: 'Python', description: 'Familiarity for analysis and automation.' },
-      { name: 'R', description: 'Working knowledge for statistical analysis.' },
-      { name: 'Java/C++', description: 'Foundational programming knowledge.' },
-    ],
-    'Data/Systems': [
-      { name: 'Bloomberg', description: 'Terminal for market data and analysis.' },
-      { name: 'FactSet', description: 'Data and analytics for financial professionals.' },
-      { name: 'SAP', description: 'Enterprise resource planning software.' },
-      { name: 'Data Management & Governance', description: 'Ensuring data quality and integrity.' },
-    ],
-    'Strategy & Execution': [
-      { name: 'Operating Model & TOM', description: 'Designing Target Operating Models.' },
-      { name: 'KPI Trees & Benefits Tracking', description: 'Defining and tracking key performance indicators.' },
-      { name: 'Program/Project Management', description: 'Leading and overseeing strategic projects.' },
-      { name: 'Stakeholder Management', description: 'Engaging with and managing key stakeholders.' },
-      { name: 'Agile', description: 'Familiarity with agile methodologies.' },
-    ],
-    'Communication': [
-      { name: 'Executive Storytelling', description: 'Crafting compelling narratives for senior leadership.' },
-      { name: 'Memo Writing', description: 'Producing concise and impactful memos.' },
-      { name: 'IC Materials', description: 'Preparing materials for investment committees.' },
-      { name: 'Client Presentations', description: 'Delivering professional presentations to clients.' },
-    ],
-  },
+  skills: [
+    { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.', proficiency: 'Expert' },
+    { name: 'Transaction Diligence', description: 'Experience in due diligence for M&A and PE.', proficiency: 'Expert' },
+    { name: 'Portfolio Management', description: 'Managing and optimizing asset portfolios.', proficiency: 'Advanced' },
+    { name: 'Strategic Planning', description: 'Developing long-term business strategies.', proficiency: 'Advanced' },
+    { name: 'Transformation', description: 'Leading change management initiatives.', proficiency: 'Expert' },
+    { name: 'Market Analysis', description: 'In-depth research of market trends and competitors.', proficiency: 'Advanced' },
+  ],
   timeline: [
     {
       company: 'PwC Deals',
-      role: 'Transformation',
+      role: 'Consultant',
       duration: '2015-2018',
       description: 'Transaction diligence and valuation for private equity and corporate clients.'
     },
     {
-      company: 'PwC',
-      role: 'Enterprise & Foundational Strategy',
-      duration: '2018-2022',
-      description: 'Developing and implementing strategies for enterprise growth and foundational initiatives.'
-    },
-    {
       company: 'Nitya Capital',
       role: 'Acquisitions & Value Creation',
-      duration: '2022-Present',
+      duration: '2018-2022',
       description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
+    },
+    {
+      company: 'OurEarth BioPlastics',
+      role: 'Founder & Operator',
+      duration: '2022-Present',
+      description: 'Founded and scaled a sustainable bioplastics company, managing operations and fundraising.'
     }
   ]
 };
@@ -93,6 +60,96 @@ function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'suc
   const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100';
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
+
+const DynamicImage = ({ altText, className }: { altText: string; className: string; }) => {
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const generateImage = async () => {
+      const prompt = "A professional and friendly-looking man with a warm smile, with a subtle, modern, energetic background. The image should be suitable for a dynamic executive profile page.";
+      
+      const payload = {
+        instances: { prompt: prompt },
+        parameters: { "sampleCount": 1 }
+      };
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+      let retries = 0;
+      const maxRetries = 5;
+      const baseDelay = 1000;
+
+      while (retries < maxRetries) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.status === 429) {
+            retries++;
+            const delay = baseDelay * Math.pow(2, retries);
+            console.log(`Rate limit exceeded. Retrying in ${delay}ms...`);
+            await new Promise(res => setTimeout(res, delay));
+            continue;
+          }
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result?.predictions?.[0]?.bytesBase64Encoded) {
+            const generatedUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+            setImageUrl(generatedUrl);
+            break;
+          } else {
+            throw new Error('Failed to generate image or invalid response structure.');
+          }
+        } catch (e) {
+          console.error('Fetch error:', e);
+          setError(true);
+          retries++;
+          const delay = baseDelay * Math.pow(2, retries);
+          console.log(`Fetch failed. Retrying in ${delay}ms...`);
+          await new Promise(res => setTimeout(res, delay));
+        }
+      }
+      setLoading(false);
+    };
+
+    generateImage();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={`${className} flex items-center justify-center bg-gray-200 dark:bg-gray-800`}>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (error || !imageUrl) {
+    return (
+      <img
+        src="https://placehold.co/520x520/e2e8f0/64748b?text=Image+Unavailable"
+        alt="Image could not be generated"
+        className={className}
+      />
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={altText}
+      className={`${className} transition-opacity duration-500 ease-in-out opacity-100`}
+    />
+  );
+};
 
 const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -217,11 +274,11 @@ export default function Page() {
       <form onSubmit={onSubmit} className="space-y-3">
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
-          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         </div>
-        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border-none bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -232,7 +289,7 @@ export default function Page() {
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
@@ -247,11 +304,11 @@ export default function Page() {
   );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="pdf-card-container">
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noreferrer" className="btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
+          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
               <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
@@ -276,7 +333,7 @@ export default function Page() {
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-110 hover:bg-blue-200 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -295,25 +352,11 @@ export default function Page() {
     <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
       {data.map((item, index) => (
         <div key={index} className="mb-8 last:mb-0 relative">
+          <div className="absolute w-4 h-4 rounded-full bg-orange-500 -left-2 top-0 -translate-x-1/2"></div>
           <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">{item.company}</h3>
           <p className="text-lg font-medium mt-1">{item.role}</p>
-          <p className="text-sm text-gray-700 dark:text-gray-300">{item.duration}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{item.duration}</p>
           <p className="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">{item.description}</p>
-        </div>
-      ))}
-    </div>
-  );
-
-  const SkillsSection = ({ skillsData }: { skillsData: Record<string, { name: string; description: string }[]> }) => (
-    <div className="space-y-6">
-      {Object.keys(skillsData).map(category => (
-        <div key={category}>
-          <h3 className="text-lg font-bold font-header mb-2 text-neutral-800 dark:text-neutral-300">{category}</h3>
-          <div className="flex flex-wrap gap-2">
-            {skillsData[category].map((skill, index) => (
-              <SkillPill key={index} name={skill.name} description={skill.description} />
-            ))}
-          </div>
         </div>
       ))}
     </div>
@@ -357,13 +400,6 @@ export default function Page() {
         .card {
           @apply bg-[color:var(--card)] shadow-sm;
         }
-        
-        .btn-secondary {
-            @apply px-4 py-2 rounded-xl text-[color:var(--ink)] bg-white dark:bg-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors duration-200 flex items-center justify-center;
-        }
-        .pdf-card-container {
-            @apply rounded-2xl p-4 md:p-5 bg-neutral-100 dark:bg-neutral-800 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out;
-        }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
@@ -387,19 +423,19 @@ export default function Page() {
 
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
                 <p className="mt-1 font-subheader" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
                 <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
                 <div className="flex flex-wrap gap-3 mt-4 text-sm">
-                  <a className="btn-secondary" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+                  <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
                   <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary"><Copy className="h-4 w-4 mr-2" />{copied ? 'Copied!' : 'Copy Contact'}</button>
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
+                <DynamicImage altText={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
               </div>
             </div>
           </div>
@@ -410,7 +446,7 @@ export default function Page() {
         <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
-            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
@@ -418,7 +454,7 @@ export default function Page() {
         <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[color:var(--accent-green)]" />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
-              <div key={index} className="p-5 rounded-xl bg-neutral-100 dark:bg-neutral-800 shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
                 <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
               </div>
@@ -431,7 +467,11 @@ export default function Page() {
         </Section>
         
         <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
-          <SkillsSection skillsData={content.skills} />
+          <div className="flex flex-wrap gap-2">
+            {content.skills.map((skill, index) => (
+              <SkillPill key={index} name={skill.name} description={skill.description} />
+            ))}
+          </div>
         </Section>
 
         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
@@ -469,7 +509,7 @@ export default function Page() {
         </Section>
       </main>
 
-      <footer className="border-t border-neutral-200/70 dark:border-neutral-800/60 py-8 mt-8 relative z-10">
+      <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8 mt-8 relative z-10">
         <div className="max-w-5xl mx-auto px-4 text-sm flex items-center justify-between" style={{color: 'var(--muted)'}}>
           <div>© {new Date().getFullYear()} {content.name}. All rights reserved.</div>
           <div className="opacity-80">Built for quick sharing • Print-ready</div>
