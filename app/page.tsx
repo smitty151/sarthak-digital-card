@@ -7,7 +7,7 @@ const content = {
   title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
   location: 'Bengaluru, India',
   email: 'mittal.sart@gmail.com',
-  phone: '+91 8073877696',
+  phone: '+91 8073877696', // kept for vCard only; not rendered on UI
   linkedin: 'https://www.linkedin.com/in/sarthakmittal115/',
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
@@ -21,9 +21,7 @@ function Anchor({ href, children }: { href: string, children: React.ReactNode })
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm'
-  const styles = kind === 'success'
-    ? 'bg-emerald-600 text-white'
-    : 'bg-rose-600 text-white'
+  const styles = kind === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>
 }
 
@@ -42,6 +40,7 @@ export default function Page() {
   }, [])
 
   const downloadVCard = () => {
+    // vCard includes phone (private in UI, but present when saved to contacts)
     const lines = [
       'BEGIN:VCARD',
       'VERSION:3.0',
@@ -79,7 +78,6 @@ export default function Page() {
       e.preventDefault()
       const form = e.currentTarget
       const data = new FormData(form)
-      // Hidden fields
       data.set('_subject', 'New message from sarthak-digital-card')
       data.set('_redirect', redirectUrl || '')
       setSubmitting(true)
@@ -162,7 +160,7 @@ export default function Page() {
                 <a className="px-3 py-1.5 rounded-full border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800" href={`mailto:${content.email}`}>Email</a>
                 <a className="px-3 py-1.5 rounded-full border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800" href={content.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
                 <a className="px-3 py-1.5 rounded-full border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800" href={content.calendly} target="_blank" rel="noreferrer">Schedule</a>
-                <button onClick={() => copyText(`${content.name} – ${content.email} | ${content.phone}`)} className="px-3 py-1.5 rounded-full bg-neutral-900 text-white hover:opacity-90">{copied ? 'Copied!' : 'Copy Contact'}</button>
+                <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="px-3 py-1.5 rounded-full bg-neutral-900 text-white hover:opacity-90">{copied ? 'Copied!' : 'Copy Contact'}</button>
               </div>
             </div>
             <div className="md:text-right text-sm text-neutral-600 dark:text-neutral-300">
@@ -184,7 +182,7 @@ export default function Page() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <div><span className="font-medium">Email:</span> <Anchor href={`mailto:${content.email}`}>{content.email}</Anchor></div>
-                <div><span className="font-medium">Phone:</span> {content.phone}</div>
+                {/* Phone intentionally hidden on UI */}
                 <div><span className="font-medium">Location:</span> {content.location}</div>
               </div>
               <div className="space-y-2">
