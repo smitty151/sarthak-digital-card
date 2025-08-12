@@ -15,7 +15,7 @@
 
 .dark:root {
   --bg: #0B0D0C;
-  --card: #0F1110;
+  --card: #272c2a;
   --ink: #E7E9EC;                /* nearly white for dark mode */
   --muted: #CBD5E1;              /* slate-300 */
   --accent: #2E7D60;
@@ -33,11 +33,11 @@ body::before {
   opacity: .10; z-index: 0;
 }
 
-.card { background-color: var(--card); }
-.card { @apply border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm; }
+.card { background-color: var(--accent); }
+.card { @apply border-none border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm; }
 
 .btn { @apply inline-flex items-center justify-center gap-2 rounded-full text-sm px-4 py-2 transition; }
-.btn-ghost { @apply border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
+.btn-ghost { background-color: var(--muted); color: var(--accent-ink);  hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
 .btn-primary { background-color: var(--accent); color: var(--accent-ink); }
 .btn-primary:hover { opacity: .94; }
 
