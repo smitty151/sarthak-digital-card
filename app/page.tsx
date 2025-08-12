@@ -12,9 +12,9 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_composite.webp',         // new composite hero image
+  // Removed static photo and aboutPhoto
+  // The images will be generated dynamically
   photoAlt: 'Sarthak Mittal composite portrait',
-  aboutPhoto: '/images/portrait_warm.webp',
   // NEW crisper, non-cover-letter bio
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
 }
@@ -25,6 +25,79 @@ function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'suc
   const styles = kind === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
   return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>
 }
+
+// Image generation component
+const DynamicImage = () => {
+    const [imageUrl, setImageUrl] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const generateImage = async () => {
+            const prompt = "A professional and friendly-looking man with a warm smile, similar in appearance to the man in the provided images. The background should be inviting, clean, and modern, with a touch of warmth. The image should be suitable for a contact page, designed to catch the user's eye.";
+
+            const payload = {
+                instances: { prompt: prompt },
+                parameters: { "sampleCount": 1 }
+            };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+            let retries = 0;
+            const maxRetries = 5;
+            const baseDelay = 1000;
+
+            while (retries < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        retries++;
+                        const delay = baseDelay * Math.pow(2, retries);
+                        console.log(`Rate limit exceeded. Retrying in ${delay}ms...`);
+                        await new Promise(res => setTimeout(res, delay));
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result && result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                        const generatedUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                        setImageUrl(generatedUrl);
+                        setLoading(false);
+                        break;
+                    } else {
+                        throw new Error('Failed to generate image or invalid response structure.');
+                    }
+                } catch (e) {
+                    console.error('Fetch error:', e);
+                    retries++;
+                    const delay = baseDelay * Math.pow(2, retries);
+                    console.log(`Fetch failed. Retrying in ${delay}ms...`);
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+        };
+
+        generateImage();
+    }, []);
+
+    return (
+        <div className="w-full h-full flex items-center justify-center overflow-hidden">
+            {loading ? (
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-400 border-t-transparent"></div>
+            ) : (
+                <img src={imageUrl} alt="Sarthak Mittal composite portrait" className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
+            )}
+        </div>
+    );
+};
 
 export default function Page() {
   const [copied, setCopied] = useState(false)
@@ -62,7 +135,7 @@ export default function Page() {
   const Form = () => {
     const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || ''
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      if (!endpoint) { e.preventDefault(); alert('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT in Vercel to enable submissions.'); return }
+      if (!endpoint) { e.preventDefault(); console.error('Add NEXT_PUBLIC_FORMSPREE_ENDPOINT in Vercel to enable submissions.'); return }
       e.preventDefault()
       const form = e.currentTarget
       const data = new FormData(form)
@@ -161,7 +234,8 @@ export default function Page() {
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
-              <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
+              {/* This is the new component for dynamic image generation */}
+              <DynamicImage />
             </div>
           </div>
         </div>
@@ -175,11 +249,11 @@ export default function Page() {
               <div className="flex gap-2 mt-4">
                 <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost">LinkedIn</a>
                 <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary">Schedule</a>
-                <a href="/api/qr?format=svg" download="sarthak-qr.svg" className="btn btn-ghost">Download QR</a>
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
-              <img src={content.aboutPhoto} alt="Portrait" className="photo w-40 h-40 md:w-56 md:h-56 object-cover rounded-2xl" />
+              {/* I've replaced the static 'aboutPhoto' with the same dynamic component for consistency */}
+              <DynamicImage />
             </div>
           </div>
         </Section>
