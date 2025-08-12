@@ -1,10 +1,23 @@
+
 'use client'
 
+/**
+ * Main page component for Sarthak's digital contacts & resume site.
+ * This file assembles all of the UI elements, including data definitions,
+ * reusable components, and the top-level page component.
+ */
+
 import { useEffect, useState, useRef } from 'react'
+import QRCode from 'qrcode'
 import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
 
 // ---------------------------------------------------------------------------
 // Custom content data
+//
+// This `content` object centralizes all of the editable data used on the page.
+// Update these values to change your name, title, contact details, biography,
+// quick stats, skills and experience timeline. Keeping this data separate
+// makes the rest of the component definitions purely presentational.
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Deals & Transformation | PE, VC, Consulting',
@@ -15,7 +28,7 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp',
+  photo: '/images/portrait_pro.webp', // Static image for reliability
   photoAlt: 'Sarthak Mittal professional portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
@@ -87,6 +100,7 @@ const content = {
 
 // ---------------------------------------------------------------------------
 // Reusable components
+
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null;
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
@@ -113,56 +127,54 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+    >
       {children}
     </div>
   );
 };
 
-/* ---------- QRCard (compact; no npm dep) ---------- */
+/* ---------- QRCard (helper) ---------- */
+/** Compact QR card that encodes `/api/vcard`.
+ *  - Smaller size for visual balance.
+ *  - Single CTA: Download vCard (copy button removed).
+ */
 function QRCard() {
-  const [size, setSize] = useState(200);
-  const [url, setUrl] = useState('');
+  const [png, setPng] = useState<string>('');
+  const [busy, setBusy] = useState(false);
+  const size = 200; // compact
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setUrl(`${window.location.origin}/api/vcard`);
-    const calc = () => setSize(window.innerWidth < 640 ? 180 : 220);
-    calc();
-    window.addEventListener('resize', calc);
-    return () => window.removeEventListener('resize', calc);
+    const url = `${window.location.origin}/api/vcard`;
+    const opts = { width: size, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
+    setBusy(true);
+    QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
   }, []);
-
-  const qrSrc = url
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(url)}&margin=1&color=111827&bgcolor=ffffff`
-    : '';
 
   return (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
-      <div className="flex items-center gap-4 sm:gap-6 flex-col sm:flex-row">
-        <div className="shrink-0 rounded-xl p-2 sm:p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
-          {qrSrc ? (
-            <img src={qrSrc} alt="QR to add contact" width={size} height={size} className="rounded" />
+      <div className="flex items-start gap-6 flex-col sm:flex-row sm:items-center">
+        {/* White tile guarantees contrast in both themes */}
+        <figure className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+          {busy || !png ? (
+            <div className="h-[200px] w-[200px] flex items-center justify-center text-sm text-neutral-500">Generating…</div>
           ) : (
-            <div className="h-[180px] w-[180px] sm:h-[220px] sm:w-[220px] flex items-center justify-center text-xs text-neutral-500">
-              Generating…
-            </div>
+            <img src={png} alt="Scan to add Sarthak’s contact" width={size} height={size} className="rounded" />
           )}
-        </div>
+        </figure>
 
-        <div className="flex-1 text-center sm:text-left">
-          <h3 className="text-lg md:text-xl font-semibold mb-1">Share this page</h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-3">
-            Scan to add my contact to your phone.
+        <div className="flex-1">
+          <h3 className="text-xl font-semibold mb-1">Digital Card</h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
+            Scan to add my contact to your phone. Works on iOS and Android.
           </p>
-          <button
-            className="btn btn-primary"
-            onClick={async () => {
-              try { await navigator.clipboard.writeText(url); } catch {}
-            }}
-          >
-            <Copy className="h-4 w-4 mr-2" /> Copy vCard link
-          </button>
+
+          <div className="flex flex-wrap gap-2">
+            <a href="/api/vcard" className="btn btn-primary"><Download className="h-4 w-4 mr-2" />Download vCard</a>
+          </div>
         </div>
       </div>
     </div>
@@ -219,9 +231,7 @@ export default function Page() {
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       if (!endpoint) {
         e.preventDefault();
-        setToastKind('error');
-        setToastMsg('Form submission is not configured.');
-        setToastOpen(true);
+        setToastKind('error'); setToastMsg('Form submission is not configured.'); setToastOpen(true);
         return;
       }
       e.preventDefault();
@@ -234,8 +244,7 @@ export default function Page() {
         const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
         if (res.ok) {
           setToastKind('success'); setToastMsg('Sent! Redirecting…'); setToastOpen(true);
-          form.reset();
-          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
+          form.reset(); setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
         } else {
           throw new Error(await res.text() || 'Submission failed');
         }
@@ -295,7 +304,7 @@ export default function Page() {
         </div>
       </div>
       {expanded && (
-        <div className="mt-4 h-[72vh] min-h-[420px] rounded-xl overflow-hidden">
+        <div className="mt-4 pdf-frame">
           <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
             <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noopener noreferrer">Open it in a new tab.</a></p>
           </object>
@@ -304,17 +313,13 @@ export default function Page() {
     </div>
   );
 
-  // ✅ SkillPill with requested colours:
-  //    Light mode  -> dark grey pill
-  //    Dark mode   -> deep blue pill
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
     const [isHovered, setIsHovered] = useState(false);
     return (
       <div className="relative">
+        {/* Light mode: dark grey pill; Dark mode: deep blue pill */}
         <span
-          className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-all duration-300 hover:scale-105
-                     bg-neutral-800 text-white hover:bg-neutral-700
-                     dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full bg-neutral-800 text-white dark:bg-blue-900 dark:text-blue-100 px-3 py-1 text-sm font-medium cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-neutral-700 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -374,22 +379,6 @@ export default function Page() {
           --ink-dark: #f0f0f0;
           --muted-dark: #a1a1aa;
           --ring-dark: #f97316;
-
-          /* component mappings */
-          --bg: var(--bg-light);
-          --card: var(--card-light);
-          --ink: var(--ink-light);
-          --muted: var(--muted-light);
-          --ring: var(--ring-light);
-          --accent: var(--primary-orange);
-        }
-        .dark {
-          --bg: var(--bg-dark);
-          --card: var(--card-dark);
-          --ink: var(--ink-dark);
-          --muted: var(--muted-dark);
-          --ring: var(--ring-dark);
-          --accent: var(--primary-orange);
         }
 
         @keyframes gradient-shift {
@@ -399,14 +388,15 @@ export default function Page() {
         }
 
         body { scroll-behavior: smooth; }
+
         .animated-background {
           background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
           background-size: 400% 400%;
           animation: gradient-shift 15s ease infinite;
         }
+
         .card { @apply bg-[var(--card)] shadow-sm; }
       `}</style>
-
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -415,15 +405,15 @@ export default function Page() {
             <a href="#about" className="hover:text-[var(--accent)] transition-colors">About</a>
             <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
             <a href="#files" className="hover:text-[var(--accent)] transition-colors">Files</a>
-            <a href="#share" className="hover:text-[var(--accent)] transition-colors">Share</a>
             <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
+            <a href="#card" className="hover:text-[var(--accent)] transition-colors">Card</a>
           </nav>
           <div className="flex items-center gap-2">
-            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
+            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2" aria-label="Toggle dark mode">
               <Sun className="h-5 w-5 block dark:hidden" />
               <Moon className="h-5 w-5 hidden dark:block" />
             </button>
-            <button onClick={downloadVCard} className="btn btn-primary hidden md:inline-flex">Download vCard</button>
+            {/* Header vCard button removed to keep the action in the Card section */}
           </div>
         </div>
       </header>
@@ -479,13 +469,19 @@ export default function Page() {
 
         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="space-y-6">
-            <PdfCard title="Resume" url={content.resumePdfUrl} expanded={showResume} onToggle={() => setShowResume(v => !v)} />
-            <PdfCard title="Cover Letter" url={content.coverLetterPdfUrl} expanded={showLetter} onToggle={() => setShowLetter(v => !v)} />
+            <PdfCard
+              title="Resume"
+              url={content.resumePdfUrl}
+              expanded={showResume}
+              onToggle={() => setShowResume(v => !v)}
+            />
+            <PdfCard
+              title="Cover Letter"
+              url={content.coverLetterPdfUrl}
+              expanded={showLetter}
+              onToggle={() => setShowLetter(v => !v)}
+            />
           </div>
-        </Section>
-
-        <Section id="share" title="Share" icon={<QrCode className="h-6 w-6 text-[var(--accent-blue)]" />}>
-          <QRCard />
         </Section>
 
         <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[var(--primary-orange)]" />}> 
@@ -503,6 +499,11 @@ export default function Page() {
             <h3 className="text-lg font-medium mb-2 font-header" style={{color: 'var(--ink)'}}>Message me</h3>
             <Form />
           </div>
+        </Section>
+
+        {/* Digital Card (QR) */}
+        <Section id="card" title="Card" icon={<QrCode className="h-6 w-6 text-[var(--primary-orange)]" />}>
+          <QRCard />
         </Section>
       </main>
 
