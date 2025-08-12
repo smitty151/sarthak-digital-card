@@ -1,4 +1,4 @@
-import './globals.css'
+import '../styles/globals.css'
 import Analytics from './components/Analytics'
 import type { Metadata } from 'next'
 
