@@ -247,7 +247,7 @@ export default function Page() {
   );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+    <div className="rounded-2xl border-none p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
@@ -276,7 +276,7 @@ export default function Page() {
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-110 hover:bg-blue-200 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
