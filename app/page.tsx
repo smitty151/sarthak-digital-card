@@ -247,11 +247,13 @@ export default function Page() {
   );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border-none p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+    {/* Tinted background and subtle border/shadow to distinguish the card from its section */}
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[color:var(--bg)] dark:bg-neutral-800 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost"><Download className="h-4 w-4 mr-2" />Open PDF</a>
+          {/* Use secondary styling for better contrast against the section background */}
+          <a href={url} target="_blank" rel="noreferrer" className="btn btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
               <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
@@ -403,7 +405,8 @@ export default function Page() {
         <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
-            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+            {/* Use secondary button for LinkedIn to create contrast */}
+            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-secondary"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
             <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
