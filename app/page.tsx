@@ -522,10 +522,10 @@ export default function Page() {
                 {/* Display the stat value in the primary accent colour for stronger contrast.
                    The accent variable is defined in globals.css and adapts between
                    light and dark modes. */}
-                <h3 className="text-3xl font-bold text-[color:var(--accent)] font-header">{stat.value}</h3>
+                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
                 {/* Use the muted colour for stat labels so they remain readable without
                    overpowering the value itself. */}
-                <p className="text-sm text-[color:var(--muted)] mt-1">{stat.title}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
