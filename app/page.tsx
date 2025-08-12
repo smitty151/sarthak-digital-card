@@ -12,16 +12,8 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/headshot_suit.webp',
+  photo: '/images/portrait_pro.webp',
   photoAlt: 'Sarthak Mittal headshot',
-  thumbs: {
-    resume: '/images/thumb_resume.png',
-    letter: '/images/thumb_letter.png',
-  }
-}
-
-function Anchor({ href, children }: { href: string, children: React.ReactNode }) {
-  return <a href={href} target="_blank" rel="noreferrer" className="link">{children}</a>
 }
 
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
@@ -42,9 +34,7 @@ export default function Page() {
   const [showLetter, setShowLetter] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setRedirectUrl(`${window.location.origin}/thanks`)
-    }
+    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`)
   }, [])
 
   const downloadVCard = () => {
@@ -64,7 +54,6 @@ export default function Page() {
 
   const copyText = async (text: string) => {
     try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1200) } catch {}
-
   }
 
   const Form = () => {
@@ -119,17 +108,16 @@ export default function Page() {
 
   const pdfParams = '#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0'
 
-  const PdfCard = ({ kind, title, thumb, url, expanded, onToggle }: { kind:'resume'|'letter'; title: string; thumb: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="ticket p-4 md:p-5">
-      <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <img src={thumb} alt={`${title} thumbnail`} className="w-full md:w-56 h-40 object-cover rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white" />
-        <div className="flex-1">
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">Compact card view keeps things tidy. Expand to preview inline, or open in a new tab for full controls.</p>
-          <div className="flex flex-wrap gap-2 mt-3">
-            <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost">Open PDF</a>
-            <button onClick={onToggle} className="btn btn-primary">{expanded ? 'Collapse' : 'Expand'}</button>
-          </div>
+  const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+          <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">Keep it simple: open in a new tab or expand to preview inline.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost">Open PDF</a>
+          <button onClick={onToggle} className="btn btn-primary">{expanded ? 'Collapse' : 'Expand'}</button>
         </div>
       </div>
       {expanded && (
@@ -149,9 +137,9 @@ export default function Page() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm text-neutral-600 dark:text-neutral-300">Digital Contacts</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#contact" className="hover:opacity-80">Contact</a>
             <a href="#resume" className="hover:opacity-80">Resume</a>
             <a href="#cover-letter" className="hover:opacity-80">Cover Letter</a>
+            <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost">Theme</button>
@@ -174,16 +162,34 @@ export default function Page() {
                 <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary">{copied ? 'Copied!' : 'Copy Contact'}</button>
               </div>
             </div>
-            <div className="order-1 md:order-2">
-              <img src={content.photo} alt={content.photoAlt} className="photo w-40 h-40 md:w-56 md:h-56 object-cover mx-auto" />
+            <div className="order-1 md:order-2 flex justify-center">
+              <img src={content.photo} alt={content.photoAlt} className="photo w-40 h-40 md:w-56 md:h-56 object-cover rounded-2xl" />
             </div>
           </div>
         </div>
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16">
+        <Section id="resume" title="Resume">
+          <PdfCard
+            title="Resume — Sarthak Mittal"
+            url={content.resumePdfUrl}
+            expanded={showResume}
+            onToggle={() => setShowResume(v => !v)}
+          />
+        </Section>
+
+        <Section id="cover-letter" title="Cover Letter">
+          <PdfCard
+            title="Cover Letter — Sarthak Mittal"
+            url={content.coverLetterPdfUrl}
+            expanded={showLetter}
+            onToggle={() => setShowLetter(v => !v)}
+          />
+        </Section>
+
         <Section id="contact" title="Contact & Social">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
               <div><span className="font-medium">Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
               <div><span className="font-medium">Location:</span> {content.location}</div>
@@ -193,32 +199,10 @@ export default function Page() {
               <div><span className="font-medium">Calendly:</span> <a className="link" href={content.calendly}>{content.calendly}</a></div>
             </div>
           </div>
-          <div className="mt-6">
+          <div>
             <h3 className="text-lg font-medium mb-2">Message me</h3>
             <Form />
           </div>
-        </Section>
-
-        <Section id="resume" title="Resume">
-          <PdfCard
-            kind="resume"
-            title="Resume — Sarthak Mittal"
-            thumb={content.thumbs.resume}
-            url={content.resumePdfUrl}
-            expanded={showResume}
-            onToggle={() => setShowResume(v => !v)}
-          />
-        </Section>
-
-        <Section id="cover-letter" title="Cover Letter">
-          <PdfCard
-            kind="letter"
-            title="Cover Letter — Sarthak Mittal"
-            thumb={content.thumbs.letter}
-            url={content.coverLetterPdfUrl}
-            expanded={showLetter}
-            onToggle={() => setShowLetter(v => !v)}
-          />
         </Section>
       </main>
 

@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --bg: #F6F3EE;        /* linen */
-  --card: #FFFFFF;      /* white */
-  --ink: #1F2937;       /* charcoal */
-  --muted: #6B7280;     /* grey-500 */
-  --accent: #2E7D60;    /* muted forest green */
+  --bg: #F6F3EE;  /* linen */
+  --card: #FFFFFF;
+  --ink: #1F2937; /* charcoal */
+  --muted: #6B7280;
+  --accent: #2E7D60; /* muted forest green */
   --accent-ink: #FFFFFF;
-  --ring: 46 125 96;    /* r g b */
+  --ring: 46 125 96;
 }
 
 .dark:root {
@@ -25,15 +25,11 @@
 html, body { height: 100%; }
 body { background-color: var(--bg); color: var(--ink); }
 
-/* Subtle paper texture hook (if present) */
+/* Paper texture hook if present */
 body::before {
-  content: "";
-  position: fixed; inset: 0;
-  pointer-events: none;
-  background-image: url('/paper-texture.png');
-  background-size: 512px 512px;
-  opacity: .22;
-  z-index: 0;
+  content: ""; position: fixed; inset: 0; pointer-events: none;
+  background-image: url('/paper-texture.png'); background-size: 512px 512px;
+  opacity: .18; z-index: 0;
 }
 
 .card { background-color: var(--card); }
@@ -47,28 +43,8 @@ body::before {
 a.link { text-decoration: underline dotted; text-underline-offset: 4px; }
 a.link:hover { text-decoration-style: solid; }
 
-/* Ticket card: dashed border + perforated notches */
-.ticket {
-  @apply relative rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[color:var(--card)] shadow-sm;
-}
-.ticket::before,
-.ticket::after {
-  content: "";
-  position: absolute;
-  top: 50%; transform: translateY(-50%);
-  width: 20px; height: 20px; border-radius: 9999px;
-  background: var(--bg);
-  z-index: 2;
-}
-.ticket::before { left: -11px; }
-.ticket::after { right: -11px; }
+/* Compact PDF container */
+.pdf-frame { @apply border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden; height: 52vh; }
+@media (min-width: 768px) { .pdf-frame { height: 48vh; } }
 
-/* Compact PDF */
-.pdf-frame { @apply border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden; height: 56vh; }
-@media (min-width: 768px) { .pdf-frame { height: 52vh; } }
-
-/* Hero photo */
-.photo {
-  @apply rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-md;
-  background: #fff;
-}
+.photo { @apply border border-neutral-200 dark:border-neutral-800 shadow-md; }
