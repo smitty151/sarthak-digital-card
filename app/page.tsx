@@ -361,6 +361,9 @@ export default function Page() {
         .btn-secondary {
             @apply px-4 py-2 rounded-xl text-[color:var(--ink)] bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors duration-200 flex items-center justify-center;
         }
+        .pdf-card-container {
+            @apply rounded-2xl p-4 md:p-5 bg-neutral-100 dark:bg-neutral-800 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out;
+        }
       `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
