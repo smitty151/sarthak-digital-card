@@ -12,8 +12,10 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp',
+  photo: '/images/portrait_pro.webp',         // hero photo
   photoAlt: 'Sarthak Mittal headshot',
+  aboutPhoto: '/images/portrait_warm.webp',   // about section photo
+  aboutBio: `I’m an investment and strategy professional with ~8 years across PwC Deals, Nitya Capital, and as founder of OurEarth BioPlastics. I blend diligence and underwriting (QoE/NWC, DCF/LBO) with operator execution—pricing, procurement and KPI rhythms—to turn plans into results. I enjoy working where models meet reality: prioritizing value drivers, de‑risking assumptions, and making change stick.`,
 }
 
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
@@ -137,6 +139,7 @@ export default function Page() {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm text-neutral-600 dark:text-neutral-300">Digital Contacts</div>
           <nav className="hidden md:flex gap-6 text-sm">
+            <a href="#about" className="hover:opacity-80">About</a>
             <a href="#resume" className="hover:opacity-80">Resume</a>
             <a href="#cover-letter" className="hover:opacity-80">Cover Letter</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
@@ -170,6 +173,21 @@ export default function Page() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16">
+        <Section id="about" title="About">
+          <div className="grid md:grid-cols-3 gap-6 items-center">
+            <div className="md:col-span-2 order-2 md:order-1">
+              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">{content.aboutBio}</p>
+              <div className="flex gap-2 mt-4">
+                <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost">LinkedIn</a>
+                <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary">Schedule</a>
+              </div>
+            </div>
+            <div className="order-1 md:order-2 flex justify-center">
+              <img src={content.aboutPhoto} alt="Portrait" className="photo w-40 h-40 md:w-56 md:h-56 object-cover rounded-2xl" />
+            </div>
+          </div>
+        </Section>
+
         <Section id="resume" title="Resume">
           <PdfCard
             title="Resume — Sarthak Mittal"
