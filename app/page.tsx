@@ -506,7 +506,7 @@ export default function Page() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
-        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--accent-blue)]" />}>
+        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
           <div className="flex gap-2 mt-4">
             {/* Use secondary button for LinkedIn to create contrast */}
@@ -535,11 +535,11 @@ export default function Page() {
           <ExperienceTimeline data={content.timeline} />
         </Section>
         
-        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--accent-blue)]" />}> 
+        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <SkillsSection skillsData={content.skills} />
         </Section>
 
-        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--accent-green)]" />}> 
+        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="space-y-6">
             <PdfCard
               title="Resume"
