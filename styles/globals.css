@@ -2,34 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Higher-contrast Scandinavian theme */
 :root {
-  --bg: #F6F3EE;  /* linen */
+  --bg: #F4F1EA;                 /* lighter linen */
   --card: #FFFFFF;
-  --ink: #1F2937; /* charcoal */
-  --muted: #6B7280;
-  --accent: #2E7D60; /* muted forest green */
+  --ink: #0F172A;                /* slate-900 for strong contrast */
+  --muted: #374151;              /* gray-700 for body copy */
+  --accent: #225E49;             /* deeper forest green */
   --accent-ink: #FFFFFF;
-  --ring: 46 125 96;
+  --ring: 34 94 73;              /* r g b */
 }
 
 .dark:root {
   --bg: #0B0D0C;
-  --card: #101211;
-  --ink: #E5E7EB;
-  --muted: #9CA3AF;
+  --card: #0F1110;
+  --ink: #E7E9EC;                /* nearly white for dark mode */
+  --muted: #CBD5E1;              /* slate-300 */
   --accent: #2E7D60;
   --accent-ink: #FFFFFF;
   --ring: 46 125 96;
 }
 
 html, body { height: 100%; }
-body { background-color: var(--bg); color: var(--ink); }
+body { background-color: var(--bg); color: var(--muted); }
 
-/* Paper texture hook if present */
+/* Lighter texture so it doesn't wash out text */
 body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none;
   background-image: url('/paper-texture.png'); background-size: 512px 512px;
-  opacity: .18; z-index: 0;
+  opacity: .10; z-index: 0;
 }
 
 .card { background-color: var(--card); }
@@ -43,7 +44,10 @@ body::before {
 a.link { text-decoration: underline dotted; text-underline-offset: 4px; }
 a.link:hover { text-decoration-style: solid; }
 
-/* Compact PDF container */
+/* Copy defaults for better readability */
+p, .copy { color: var(--muted); }
+h1, h2, h3, h4 { color: var(--ink); }
+
 .pdf-frame { @apply border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden; height: 52vh; }
 @media (min-width: 768px) { .pdf-frame { height: 48vh; } }
 

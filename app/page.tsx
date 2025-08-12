@@ -12,10 +12,11 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp',         // hero photo
-  photoAlt: 'Sarthak Mittal headshot',
-  aboutPhoto: '/images/portrait_warm.webp',   // about section photo
-  aboutBio: `I’m an investment and strategy professional with ~8 years across PwC Deals, Nitya Capital, and as founder of OurEarth BioPlastics. I blend diligence and underwriting (QoE/NWC, DCF/LBO) with operator execution—pricing, procurement and KPI rhythms—to turn plans into results. I enjoy working where models meet reality: prioritizing value drivers, de‑risking assumptions, and making change stick.`,
+  photo: '/images/portrait_composite.webp',         // new composite hero image
+  photoAlt: 'Sarthak Mittal composite portrait',
+  aboutPhoto: '/images/portrait_warm.webp',
+  // NEW crisper, non-cover-letter bio
+  aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
 }
 
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
@@ -91,7 +92,6 @@ export default function Page() {
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
-        <p className="text-xs text-neutral-600 dark:text-neutral-400">Or schedule directly: <a className="link" href={content.calendly} target="_blank" rel="noreferrer">Calendly</a></p>
       </form>
     )
   }
@@ -113,10 +113,7 @@ export default function Page() {
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
     <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div>
-          <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-0.5">Keep it simple: open in a new tab or expand to preview inline.</p>
-        </div>
+        <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
         <div className="flex flex-wrap gap-2">
           <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost">Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">{expanded ? 'Collapse' : 'Expand'}</button>
@@ -137,7 +134,7 @@ export default function Page() {
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-sm text-neutral-600 dark:text-neutral-300">Executive Profile</div>
+          <div className="text-sm" style={{color: 'var(--muted)'}}>Digital Contacts</div>
           <nav className="hidden md:flex gap-6 text-sm">
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#resume" className="hover:opacity-80">Resume</a>
@@ -155,18 +152,16 @@ export default function Page() {
         <div className="card p-6 md:p-8">
           <div className="grid md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2 order-2 md:order-1">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{content.name}</h1>
-              <p className="text-neutral-700 dark:text-neutral-300 mt-1">{content.title}</p>
-              <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-1">{content.location}</p>
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{color: 'var(--ink)'}}>{content.name}</h1>
+              <p className="mt-1" style={{color: 'var(--muted)'}}>{content.title}</p>
+              <p className="text-sm mt-1" style={{color: 'var(--muted)'}}>{content.location}</p>
               <div className="flex flex-wrap gap-3 mt-4 text-sm">
                 <a className="btn btn-ghost" href={`mailto:${content.email}`}>Email</a>
-                <a className="btn btn-ghost" href={content.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-                <a className="btn btn-ghost" href={content.calendly} target="_blank" rel="noreferrer">Schedule</a>
                 <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary">{copied ? 'Copied!' : 'Copy Contact'}</button>
               </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
-              <img src={content.photo} alt={content.photoAlt} className="photo w-40 h-40 md:w-56 md:h-56 object-cover rounded-2xl" />
+              <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
             </div>
           </div>
         </div>
@@ -176,7 +171,7 @@ export default function Page() {
         <Section id="about" title="About">
           <div className="grid md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2 order-2 md:order-1">
-              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">{content.aboutBio}</p>
+              <p className="leading-relaxed copy">{content.aboutBio}</p>
               <div className="flex gap-2 mt-4">
                 <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost">LinkedIn</a>
                 <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary">Schedule</a>
@@ -190,7 +185,7 @@ export default function Page() {
 
         <Section id="resume" title="Resume">
           <PdfCard
-            title="Resume — Sarthak Mittal"
+            title="Resume"
             url={content.resumePdfUrl}
             expanded={showResume}
             onToggle={() => setShowResume(v => !v)}
@@ -199,33 +194,33 @@ export default function Page() {
 
         <Section id="cover-letter" title="Cover Letter">
           <PdfCard
-            title="Cover Letter — Sarthak Mittal"
+            title="Cover Letter"
             url={content.coverLetterPdfUrl}
             expanded={showLetter}
             onToggle={() => setShowLetter(v => !v)}
           />
         </Section>
 
-        <Section id="contact" title="Contact & Social">
+        <Section id="contact" title="Contact">
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
-              <div><span className="font-medium">Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
-              <div><span className="font-medium">Location:</span> {content.location}</div>
+              <div><span className="font-medium" style={{color: 'var(--ink)'}}>Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
+              <div><span className="font-medium" style={{color: 'var(--ink)'}}>Location:</span> {content.location}</div>
             </div>
             <div className="space-y-2">
-              <div><span className="font-medium">LinkedIn:</span> <a className="link" href={content.linkedin}>{content.linkedin}</a></div>
-              <div><span className="font-medium">Calendly:</span> <a className="link" href={content.calendly}>{content.calendly}</a></div>
+              <div><span className="font-medium" style={{color: 'var(--ink)'}}>LinkedIn:</span> <a className="link" href={content.linkedin}>{content.linkedin}</a></div>
+              <div><span className="font-medium" style={{color: 'var(--ink)'}}>Calendly:</span> <a className="link" href={content.calendly}>{content.calendly}</a></div>
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-medium mb-2">Message me</h3>
+            <h3 className="text-lg font-medium mb-2" style={{color: 'var(--ink)'}}>Message me</h3>
             <Form />
           </div>
         </Section>
       </main>
 
       <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8 mt-8">
-        <div className="max-w-5xl mx-auto px-4 text-sm text-neutral-600 dark:text-neutral-400 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 text-sm flex items-center justify-between" style={{color: 'var(--muted)'}}>
           <div>© {new Date().getFullYear()} {content.name}. All rights reserved.</div>
           <div className="opacity-80">Built for quick sharing • Print-ready</div>
         </div>
