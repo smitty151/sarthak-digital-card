@@ -195,16 +195,18 @@ function QRCard() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setSiteUrl(window.location.origin);
-  }, []);
+  // inside QRCard useEffect:
+  if (typeof window !== 'undefined') {
+    setSiteUrl(`${window.location.origin}/api/vcard`); // was just origin before
+  }}, []);
 
   useEffect(() => {
     if (!siteUrl) return;
     setBusy(true);
-    const colorDark = isDark ? '#E5E7EB' : '#0F172A';  // light grey on dark, slate on light
-    const colorLight = '#00000000';                    // transparent so it sits on any card
+    const colorDark = '#111827';   // dark slate
+    const colorLight = '#FFFFFF';  // white background for the QR itself
 
-    const opts = { width: size, margin: 1, color: { dark: colorDark, light: colorLight } };
+    const opts = { width: size, margin: 2, color: { dark: colorDark, light: colorLight } };
 
     Promise.all([
       QRCode.toDataURL(siteUrl, opts),                  // PNG
@@ -597,6 +599,7 @@ export default function Page() {
             <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
             <a href="#files" className="hover:text-[var(--accent)] transition-colors">Files</a>
             <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
+            <a href="#share" …>Share</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
@@ -697,6 +700,11 @@ export default function Page() {
           </div>
         </Section>
       </main>
+
+      {/*QR Code Section*/}
+        <Section id="share" title="Share" icon={<QrCode className="h-6 w-6 text-[var(--accent-blue)]" />}>
+         <QRCard />
+        </Section>
 
       <footer className="border-t border-neutral-200 dark:border-neutral-800 py-8 mt-8 relative z-10">
         <div className="max-w-5xl mx-auto px-4 text-sm flex items-center justify-between" style={{color: 'var(--muted)'}}>
