@@ -1,26 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-
-// Icon imports for a cleaner UI
 import {
-  Mail,
-  MapPin,
-  Linkedin,
-  Calendar,
-  Download,
-  Copy,
-  ChevronDown,
-  ChevronUp,
-  Sun,
-  Moon,
-  Briefcase,
-  Layers,
-  BarChart2,
-  FileText,
-  BookOpen
+  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen
 } from 'lucide-react';
 
+// Custom content data
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Investments & Transformation | PE / IB / Consulting',
@@ -33,30 +18,49 @@ const content = {
   coverLetterPdfUrl: '/cover-letter.pdf',
   photoAlt: 'Sarthak Mittal composite portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
-  // New section data for quick stats and skills
   quickStats: [
     { title: 'Years of Experience', value: '7+' },
     { title: 'Deals Closed', value: '15+' },
     { title: 'Capital Deployed', value: '$200M+' },
   ],
   skills: [
-    { name: 'Financial Modeling', proficiency: 'Expert' },
-    { name: 'Transaction Diligence', proficiency: 'Expert' },
-    { name: 'Portfolio Management', proficiency: 'Advanced' },
-    { name: 'Python/SQL/BI', proficiency: 'Advanced' },
-    { name: 'Value Creation', proficiency: 'Expert' },
-    { name: 'Fundraising', proficiency: 'Intermediate' },
+    { name: 'Financial Modeling', description: 'Advanced financial projections and valuation.', proficiency: 'Expert' },
+    { name: 'Transaction Diligence', description: 'Experience in due diligence for M&A and PE.', proficiency: 'Expert' },
+    { name: 'Portfolio Management', description: 'Managing and optimizing asset portfolios.', proficiency: 'Advanced' },
+    { name: 'Strategic Planning', description: 'Developing long-term business strategies.', proficiency: 'Advanced' },
+    { name: 'Transformation', description: 'Leading change management initiatives.', proficiency: 'Expert' },
+    { name: 'Market Analysis', description: 'In-depth research of market trends and competitors.', proficiency: 'Advanced' },
+  ],
+  timeline: [
+    {
+      company: 'PwC Deals',
+      role: 'Consultant',
+      duration: '2015-2018',
+      description: 'Transaction diligence and valuation for private equity and corporate clients.'
+    },
+    {
+      company: 'Nitya Capital',
+      role: 'Acquisitions & Value Creation',
+      duration: '2018-2022',
+      description: 'Sourced and underwrote real estate acquisitions; led value creation initiatives across the portfolio.'
+    },
+    {
+      company: 'OurEarth BioPlastics',
+      role: 'Founder & Operator',
+      duration: '2022-Present',
+      description: 'Founded and scaled a sustainable bioplastics company, managing operations and fundraising.'
+    }
   ]
-}
+};
 
+// Reusable components
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
-  if (!open) return null
-  const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300'
-  const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100'
-  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>
+  if (!open) return null;
+  const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
+  const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100';
+  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
 }
 
-// A more robust and reliable Dynamic Image component with fallback
 const DynamicImage = ({ altText, className }: { altText: string; className: string; }) => {
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -64,7 +68,7 @@ const DynamicImage = ({ altText, className }: { altText: string; className: stri
 
   useEffect(() => {
     const generateImage = async () => {
-      const prompt = "A professional and friendly-looking man with a warm smile, similar in appearance to the man in the provided images. The background should be inviting, clean, and modern, with a touch of warmth. The image should be suitable for a contact page, designed to catch the user's eye.";
+      const prompt = "A professional and friendly-looking man with a warm smile, with a subtle, modern, energetic background. The image should be suitable for a dynamic executive profile page.";
       
       const payload = {
         instances: { prompt: prompt },
@@ -107,14 +111,14 @@ const DynamicImage = ({ altText, className }: { altText: string; className: stri
           }
         } catch (e) {
           console.error('Fetch error:', e);
-          setError(true); // Set error state on failure
+          setError(true);
           retries++;
           const delay = baseDelay * Math.pow(2, retries);
           console.log(`Fetch failed. Retrying in ${delay}ms...`);
           await new Promise(res => setTimeout(res, delay));
         }
       }
-      setLoading(false); // Always set loading to false after the loop finishes
+      setLoading(false);
     };
 
     generateImage();
@@ -129,7 +133,6 @@ const DynamicImage = ({ altText, className }: { altText: string; className: stri
   }
 
   if (error || !imageUrl) {
-    // Fallback image in case of failure
     return (
       <img
         src="https://placehold.co/520x520/e2e8f0/64748b?text=Image+Unavailable"
@@ -148,19 +151,55 @@ const DynamicImage = ({ altText, className }: { altText: string; className: stri
   );
 };
 
-export default function Page() {
-  const [copied, setCopied] = useState(false)
-  const [redirectUrl, setRedirectUrl] = useState<string>('')
-  const [submitting, setSubmitting] = useState(false)
-  const [toastOpen, setToastOpen] = useState(false)
-  const [toastKind, setToastKind] = useState<'success' | 'error'>('success')
-  const [toastMsg, setToastMsg] = useState('')
-  const [showResume, setShowResume] = useState(false)
-  const [showLetter, setShowLetter] = useState(false)
+// New SectionWithAnimation component for a fade-in effect
+const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`)
-  }, [])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Main page component
+export default function Page() {
+  const [copied, setCopied] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState<string>('');
+  const [submitting, setSubmitting] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastKind, setToastKind] = useState<'success' | 'error'>('success');
+  const [toastMsg, setToastMsg] = useState('');
+  const [showResume, setShowResume] = useState(false);
+  const [showLetter, setShowLetter] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`);
+  }, []);
 
   const downloadVCard = () => {
     const lines = [
@@ -170,12 +209,12 @@ export default function Page() {
       content.calendly ? `URL:${content.calendly}` : '',
       content.linkedin ? `X-SOCIALPROFILE;type=linkedin:${content.linkedin}` : '',
       `ADR;TYPE=WORK:;;${content.location};;;;`,'END:VCARD',
-    ].filter(Boolean).join('\n')
-    const a = document.createElement('a')
-    a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`
-    a.download = `${content.name.replace(/\s+/g, '-')}.vcf`
-    a.click()
-  }
+    ].filter(Boolean).join('\n');
+    const a = document.createElement('a');
+    a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`;
+    a.download = `${content.name.replace(/\s+/g, '-')}.vcf`;
+    a.click();
+  };
 
   const copyText = async (text: string) => {
     try {
@@ -194,45 +233,44 @@ export default function Page() {
       setToastOpen(true);
       setTimeout(() => setToastOpen(false), 3000);
     }
-  }
+  };
 
   const Form = () => {
-    const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || ''
+    const endpoint = process.env.NEXT_PUBLIC_FORMSPREE_ENDPOINT || '';
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       if (!endpoint) {
         e.preventDefault();
         setToastKind('error');
         setToastMsg('Form submission is not configured.');
         setToastOpen(true);
-        return
+        return;
       }
-      e.preventDefault()
-      const form = e.currentTarget
-      const data = new FormData(form)
-      data.set('_subject', 'New message from sarthak-digital-card')
-      data.set('_redirect', redirectUrl || '')
-      setSubmitting(true); setToastOpen(false)
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = new FormData(form);
+      data.set('_subject', 'New message from sarthak-digital-card');
+      data.set('_redirect', redirectUrl || '');
+      setSubmitting(true); setToastOpen(false);
       try {
-        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
+        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
         if (res.ok) {
           setToastKind('success');
           setToastMsg('Sent! Redirecting…');
           setToastOpen(true);
           form.reset();
-          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800)
-        }
-        else {
-          throw new Error(await res.text() || 'Submission failed')
+          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
+        } else {
+          throw new Error(await res.text() || 'Submission failed');
         }
       } catch {
         setToastKind('error');
         setToastMsg('Something went wrong. Please try again.');
-        setToastOpen(true)
+        setToastOpen(true);
       } finally {
         setSubmitting(false);
-        setTimeout(() => setToastOpen(false), 3000)
+        setTimeout(() => setToastOpen(false), 3000);
       }
-    }
+    };
 
     return (
       <form onSubmit={onSubmit} className="space-y-3">
@@ -247,32 +285,32 @@ export default function Page() {
           {submitting ? 'Sending…' : 'Send'}
         </button>
       </form>
-    )
-  }
+    );
+  };
 
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
-      <div className="card p-6 md:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            {icon}
-            <h2 className="text-2xl md:text-3xl font-semibold">{title}</h2>
+      <SectionWithAnimation>
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              {icon}
+              <h2 className="text-2xl md:text-3xl font-semibold font-header">{title}</h2>
+            </div>
+            {action}
           </div>
-          {action}
+          {children}
         </div>
-        {children}
-      </div>
+      </SectionWithAnimation>
     </section>
-  )
-
-  const pdfParams = '#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0'
+  );
 
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm">
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 bg-white dark:bg-[color:var(--card)] shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
+        <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
         <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost">Open PDF</a>
+          <a href={url} target="_blank" rel="noreferrer" className="btn btn-ghost"><Download className="h-4 w-4 mr-2" />Open PDF</a>
           <button onClick={onToggle} className="btn btn-primary">
             {expanded ? (
               <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
@@ -284,64 +322,96 @@ export default function Page() {
       </div>
       {expanded && (
         <div className="mt-4 pdf-frame">
-          <object data={`${url}${pdfParams}`} type="application/pdf" className="w-full h-full">
+          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
             <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noreferrer">Open it in a new tab.</a></p>
           </object>
         </div>
       )}
     </div>
-  )
+  );
 
-  const SkillPill = ({ name, proficiency }: { name: string, proficiency: string }) => (
-    <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200">
-      {name}
-    </span>
+  const SkillPill = ({ name, description }: { name: string, description: string }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    return (
+      <div className="relative">
+        <span
+          className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-200 cursor-pointer transition-all duration-300 hover:scale-110 hover:bg-blue-200 dark:hover:bg-blue-800"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {name}
+        </span>
+        {isHovered && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-2 text-xs bg-gray-800 text-white rounded-lg whitespace-nowrap z-50 shadow-lg">
+            {description}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const ExperienceTimeline = ({ data }: { data: { company: string, role: string, duration: string, description: string }[] }) => (
+    <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4">
+      {data.map((item, index) => (
+        <div key={index} className="mb-8 last:mb-0 relative">
+          <div className="absolute w-4 h-4 rounded-full bg-orange-500 -left-2 top-0 -translate-x-1/2"></div>
+          <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">{item.company}</h3>
+          <p className="text-lg font-medium mt-1">{item.role}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{item.duration}</p>
+          <p className="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">{item.description}</p>
+        </div>
+      ))}
+    </div>
   );
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[color:var(--bg)] text-[color:var(--ink)]">
-      {/* Background gradient for a more dynamic feel */}
-      <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10 pointer-events-none">
-        <div className="absolute top-0 left-0 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000"></div>
-      </div>
-      <style>
-        {`
-        .animate-blob {
-          animation: blob 7s infinite;
+      <style>{`
+        :root {
+          --primary-orange: #f97316;
+          --accent-blue: #3b82f6;
+          --accent-green: #22c55e;
+          --bg-light: #fdf2e9;
+          --card-light: #ffffff;
+          --ink-light: #1e293b;
+          --muted-light: #64748b;
+          --ring-light: #f97316;
+          --bg-dark: #121212;
+          --card-dark: #1f1f1f;
+          --ink-dark: #f0f0f0;
+          --muted-dark: #a1a1aa;
+          --ring-dark: #f97316;
         }
-        .animation-delay-2000 {
-          animation-delay: 2s;
+
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
-        .animation-delay-4000 {
-          animation-delay: 4s;
+
+        body {
+          scroll-behavior: smooth;
         }
-        @keyframes blob {
-          0% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
+
+        .animated-background {
+          background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
+          background-size: 400% 400%;
+          animation: gradient-shift 15s ease infinite;
         }
-        `}
-      </style>
+
+        .card {
+          @apply bg-[color:var(--card)] shadow-sm;
+        }
+      `}</style>
       <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[color:var(--bg)]/80 dark:bg-[color:var(--bg)]/70">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="text-sm font-bold" style={{color: 'var(--ink)'}}>{content.name}</div>
+          <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
           <nav className="hidden md:flex gap-6 text-sm">
-            <a href="#about" className="hover:text-blue-500 transition-colors">About</a>
-            <a href="#experience" className="hover:text-blue-500 transition-colors">Experience</a>
-            <a href="#files" className="hover:text-blue-500 transition-colors">Files</a>
-            <a href="#contact" className="hover:text-blue-500 transition-colors">Contact</a>
+            <a href="#about" className="hover:text-[color:var(--accent-blue)] transition-colors">About</a>
+            <a href="#experience" className="hover:text-[color:var(--accent-blue)] transition-colors">Experience</a>
+            <a href="#files" className="hover:text-[color:var(--accent-blue)] transition-colors">Files</a>
+            <a href="#contact" className="hover:text-[color:var(--accent-blue)] transition-colors">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
             <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
@@ -354,60 +424,59 @@ export default function Page() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
-        <div className="card p-6 md:p-8">
-          <div className="grid md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-2 order-2 md:order-1">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{color: 'var(--ink)'}}>{content.name}</h1>
-              <p className="mt-1" style={{color: 'var(--muted)'}}>{content.title}</p>
-              <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
-              <div className="flex flex-wrap gap-3 mt-4 text-sm">
-                <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
-                <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary"><Copy className="h-4 w-4 mr-2" />{copied ? 'Copied!' : 'Copy Contact'}</button>
+        <SectionWithAnimation>
+          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+            <div className="grid md:grid-cols-3 gap-6 items-center">
+              <div className="md:col-span-2 order-2 md:order-1">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
+                <p className="mt-1 font-subheader" style={{color: 'var(--accent-blue)'}}>{content.title}</p>
+                <p className="text-sm mt-1 flex items-center gap-1" style={{color: 'var(--muted)'}}><MapPin className="h-4 w-4" />{content.location}</p>
+                <div className="flex flex-wrap gap-3 mt-4 text-sm">
+                  <a className="btn btn-ghost" href={`mailto:${content.email}`}><Mail className="h-4 w-4 mr-2" />Email</a>
+                  <button onClick={() => copyText(`${content.name} – ${content.email}`)} className="btn btn-primary"><Copy className="h-4 w-4 mr-2" />{copied ? 'Copied!' : 'Copy Contact'}</button>
+                </div>
+              </div>
+              <div className="order-1 md:order-2 flex justify-center">
+                <DynamicImage altText={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
               </div>
             </div>
-            <div className="order-1 md:order-2 flex justify-center">
-              <DynamicImage altText={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover" />
-            </div>
           </div>
-        </div>
+        </SectionWithAnimation>
       </div>
 
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
-        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-blue-500" />}>
-          <div className="grid md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-2 order-2 md:order-1">
-              <p className="leading-relaxed copy">{content.aboutBio}</p>
-              <div className="flex gap-2 mt-4">
-                <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
-                <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
-              </div>
-            </div>
-            <div className="order-1 md:order-2 flex justify-center">
-              <DynamicImage altText="Portrait" className="photo w-40 h-40 md:w-56 md:h-56 object-cover rounded-2xl" />
-            </div>
+        <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
+          <p className="leading-relaxed copy">{content.aboutBio}</p>
+          <div className="flex gap-2 mt-4">
+            <a href={content.linkedin} target="_blank" rel="noreferrer" className="btn btn-ghost"><Linkedin className="h-4 w-4 mr-2" />LinkedIn</a>
+            <a href={content.calendly} target="_blank" rel="noreferrer" className="btn btn-primary"><Calendar className="h-4 w-4 mr-2" />Schedule</a>
           </div>
         </Section>
-
-        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-purple-500" />}>
+        
+        <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[color:var(--accent-green)]" />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
-              <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                <h3 className="text-3xl font-bold text-blue-500">{stat.value}</h3>
+              <div key={index} className="bg-neutral-50 dark:bg-neutral-800 p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
+                <h3 className="text-3xl font-bold text-[color:var(--primary-orange)] font-header">{stat.value}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{stat.title}</p>
               </div>
             ))}
           </div>
         </Section>
         
-        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-green-500" />}>
+        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
+          <ExperienceTimeline data={content.timeline} />
+        </Section>
+        
+        <Section id="skills" title="Skills" icon={<Layers className="h-6 w-6 text-[color:var(--accent-blue)]" />}>
           <div className="flex flex-wrap gap-2">
             {content.skills.map((skill, index) => (
-              <SkillPill key={index} name={skill.name} proficiency={skill.proficiency} />
+              <SkillPill key={index} name={skill.name} description={skill.description} />
             ))}
           </div>
         </Section>
 
-        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-orange-500" />}>
+        <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[color:var(--accent-green)]" />}>
           <div className="space-y-6">
             <PdfCard
               title="Resume"
@@ -424,7 +493,7 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-red-500" />}>
+        <Section id="contact" title="Contact" icon={<BookOpen className="h-6 w-6 text-[color:var(--primary-orange)]" />}>
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Email:</span> <a className="link" href={`mailto:${content.email}`}>{content.email}</a></div>
@@ -436,7 +505,7 @@ export default function Page() {
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-medium mb-2" style={{color: 'var(--ink)'}}>Message me</h3>
+            <h3 className="text-lg font-medium mb-2 font-header" style={{color: 'var(--ink)'}}>Message me</h3>
             <Form />
           </div>
         </Section>
@@ -449,5 +518,5 @@ export default function Page() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
