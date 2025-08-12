@@ -218,10 +218,10 @@ export default function Page() {
         <input type="text" name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" />
         <div className="grid md:grid-cols-2 gap-3">
           <input required name="name" placeholder="Your name" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+          <input required type="email" name="email" placeholder="Email" className="px-3 py-2 rounded-xl border-none border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         </div>
         <input name="company" placeholder="Company (optional)" className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
-        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
+        <textarea required name="message" placeholder="Message" rows={5} className="w-full px-3 py-2 rounded-xl border-none border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--ring))]" />
         <button className="btn btn-primary disabled:opacity-60 disabled:cursor-not-allowed" aria-disabled={submitting} disabled={submitting}>
           {submitting ? 'Sending…' : 'Send'}
         </button>
@@ -232,7 +232,7 @@ export default function Page() {
   const Section = ({ id, title, children, action, icon }: { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
-        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
@@ -381,7 +381,7 @@ export default function Page() {
 
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out border-none">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{color: 'var(--ink)'}}>{content.name}</h1>
