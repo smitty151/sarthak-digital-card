@@ -34,13 +34,13 @@ body::before {
 }
 
 /* Base card styling, borders removed for a cleaner look */
-.card { @apply bg-[color:var(--card)] rounded-2xl shadow-sm; }
+.card { @apply bg-[var(--card)] rounded-2xl shadow-sm; }
 
 /* Custom buttons */
 .btn { @apply inline-flex items-center justify-center gap-2 rounded-full text-sm px-4 py-2 transition; }
-.btn-ghost { @apply bg-transparent text-[color:var(--ink)] hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
-.btn-primary { @apply bg-[color:var(--accent)] text-[color:var(--accent-ink)] hover:opacity-90; }
-.btn-secondary { @apply bg-neutral-200 dark:bg-neutral-800 text-[color:var(--ink)] hover:bg-neutral-300 dark:hover:bg-neutral-700; }
+.btn-ghost { @apply bg-transparent text-[var(--ink)] hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
+.btn-primary { @apply bg-[var(--accent)] text-[var(--accent-ink)] hover:opacity-90; }
+.btn-secondary { @apply bg-neutral-200 dark:bg-neutral-800 text-[var(--ink)] hover:bg-neutral-300 dark:hover:bg-neutral-700; }
 
 a.link { text-decoration: underline dotted; text-underline-offset: 4px; }
 a.link:hover { text-decoration-style: solid; }
