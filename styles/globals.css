@@ -84,13 +84,27 @@ body {
   box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px color-mix(in oklab, var(--ring) 35%, transparent);
 }
 
-/* Primary — orange brand */
+/* Primary — GREEN (accent) */
 .btn-primary {
-  background: var(--primary-orange);
-  color: #fff;
+  background: var(--accent-green); /* light: #16A34A */
+  color: #ffffff;                  /* strong contrast on linen bg */
 }
-.btn-primary:hover { filter: brightness(0.96); }
-.dark .btn-primary:hover { filter: brightness(1.06); }
+/* Slightly darker on hover in light */
+.btn-primary:hover { filter: brightness(0.94); }
+
+/* Dark theme: a touch brighter green + near-black text for AAA contrast */
+.dark .btn-primary {
+  background: var(--accent-green); /* dark: #22C55E */
+  color: #0B1020;                  /* readable on bright green */
+}
+.dark .btn-primary:hover { filter: brightness(1.08); }
+
+/* Make the focus ring follow the green, not the orange brand */
+.btn-primary:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--accent-green),
+    0 0 0 6px color-mix(in oklab, var(--accent-green) 35%, transparent);
+}
 
 /* Secondary — neutral chip that contrasts with both backgrounds */
 .btn-secondary {
