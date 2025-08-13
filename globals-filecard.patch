@@ -1,0 +1,44 @@
+diff --git a/app/globals.css b/app/globals.css
+index 3333333..4444444 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@
+ /* PDF inline viewer height */
+-.pdf-frame { height: min(70vh, 900px); }
+-@media (max-width: 640px) { .pdf-frame { height: 70vh; } }
++.pdf-frame { height: min(70vh, 900px); }
++@media (max-width: 640px) { .pdf-frame { height: 70vh; } }
++
++/* File cards get a subtle tint that contrasts with the section */
++.file-card {
++  background: color-mix(in oklab, var(--bg) 94%, #ffffff 6%);
++}
++.dark .file-card {
++  background: #111315;
++}
++
++/* Loading shimmer for embedded PDFs */
++.pdf-skeleton {
++  position: relative;
++  height: min(70vh, 900px);
++  border-radius: 0.75rem;
++  background: linear-gradient(
++    90deg,
++    rgba(0,0,0,0.06) 0%,
++    rgba(0,0,0,0.03) 40%,
++    rgba(0,0,0,0.06) 80%
++  );
++  animation: pdf-shimmer 1.2s ease-in-out infinite;
++}
++.dark .pdf-skeleton {
++  background: linear-gradient(
++    90deg,
++    rgba(255,255,255,0.07) 0%,
++    rgba(255,255,255,0.03) 40%,
++    rgba(255,255,255,0.07) 80%
++  );
++}
++@keyframes pdf-shimmer {
++  0% { background-position: -200px 0; }
++  100% { background-position: calc(200px + 100%) 0; }
++}
