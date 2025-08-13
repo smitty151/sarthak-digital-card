@@ -209,7 +209,7 @@ body {
    background: linear-gradient (
       180deg,
       color-mix(in oklab, var(--primary-orange) 92%, white) 0%,
-      var(--primary-orange) 60%,
+      var(--primary-orange) 90%,
       color-mix(in oklab, var(--primary-orange) 85%, black) 100%
    );
    box-shadow:
