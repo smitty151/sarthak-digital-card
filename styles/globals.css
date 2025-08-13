@@ -21,13 +21,13 @@
   --accent-blue: #2563EB;     /* links / accent */
   --accent-green: #16A34A;
    /* Timeline geometry*/
-   --tl-x: 28px;              /* horizon position of the vertical line*/
-   --tl-w: 3px;               /* line thickness */
+   /*--tl-x: 28px;              /* horizon position of the vertical line*/
+   /*--tl-w: 3px;               /* line thickness */
    --tl-gutter: 10px;         /* how far into the left margin the spine/dots sit */
    --tl-col: 24px;            /* width of the dot column */
-   --tl-spine: 2px;           /* thickness of the line */
+   --tl-spine: 3px;           /* thickness of the line */
    --tl-dot: 10px;            /* solid dot diameter */
-   --tl-halo: 4px;           /* out halo diameter */
+   --tl-halo: 4px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
 
   color-scheme: light; /* native widgets pick light by default */
@@ -204,8 +204,17 @@ body {
   top: 0;
   bottom: 0;
   width: var(--tl-spine);
-  background: var(--primary-orange);
-  opacity: 0.9;
+  border-radius: 9999px; /* rounded ends */
+   /* soft vertical glow so the spine feels embossed */
+   background: linear-gradient (
+      180deg,
+      color-mix(in oklab, var(--primary-orange) 92%, white) 0%,
+      var(--primary-orange) 60%,
+      color-mix(in oklab, var(--primary-orange) 85%, black) 100%
+   );
+   box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--primary-orange) 22%, transparent),
+      0 0 18px color-mix(in oklab, var(--primary-orange) 20%, transparent);
 }
 
 /* Each row = gutter column + flexible content column */
@@ -231,6 +240,9 @@ body {
   border-radius: 9999px;
   background: var(--primary-orange);
   margin-top: 0.4rem;          /* lines up with first text line */
+  box-shadow:
+     0 0 0 1px color-mix(in oklab, var(--primary-orange) 25%, transparent),
+     0 6px 10px rgba(0,0,0,0.06); /* subtle lift */
 }
 
 /* Soft halo */
@@ -245,6 +257,12 @@ body {
 /* Keep long lines wrapping nicely */
 .timeline-content { 
    min-width: 0; 
+}
+
+/* Subtle row hover on large screens */
+@media (hover:hover) and (pointer:fine) {
+   .timeline-item { transition: transofmr .18s ease, background-color .18s ease; }
+   .timeline-item:hover { transofrm: translateY(-1px); }
 }
 
 /* File cards: subtle tint that contrasts with the section background */
