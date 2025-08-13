@@ -137,54 +137,49 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
 
 // ---------------------------------------------------------------------------
 // QR Card
-/* ---------- QRCard (compact, centered on mobile) ---------- */
+/* ---------- QRCard (helper) ---------- */
 function QRCard() {
   const [png, setPng] = useState<string>('');
   const [busy, setBusy] = useState(false);
+  const size = 240; // << define size here (or 280 if you prefer)
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const url = `${window.location.origin}/api/vcard`;
-  
-    // Use accent blue in both themes; brighter in dark for contrast
+
+    // Use accent blue that matches theme
     const isDark = document.documentElement.classList.contains('dark');
-    const qrBlue = isDark ? '#60A5FA' : '#2563EB';  // matches your --accent-blue tokens
-  
+    const qrBlue = isDark ? '#60A5FA' : '#2563EB';
+
     const opts = {
-      width: size,
+      width: size,                 // << now defined
       margin: 2,
       color: { dark: qrBlue, light: '#FFFFFF' },
     };
-  
+
     setBusy(true);
     QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
   }, []);
 
   return (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-start items-center gap-6">
-        {/* White tile guarantees contrast in both themes; image scales responsively */}
-        <div className="rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+      <div className="flex items-start gap-6 flex-col sm:flex-row">
+        <div className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm center-sm">
           {busy || !png ? (
-            <div className="h-[220px] w-[220px] sm:h-[280px] sm:w-[280px] flex items-center justify-center text-sm text-neutral-500">
+            <div className="h-[240px] w-[240px] flex items-center justify-center text-sm text-neutral-500">
               Generating…
             </div>
           ) : (
-            <img
-              src={png}
-              alt="QR to add contact"
-              className="w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded"
-            />
+            <img src={png} alt="QR to add contact" width={size} height={size} className="rounded" />
           )}
         </div>
 
-        <div className="flex-1 text-center sm:text-left">
+        <div className="flex-1">
           <h3 className="text-xl font-semibold mb-2">Digital Card</h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
             Scan to add my contact to your phone. Works on iOS and Android.
           </p>
           <a href="/api/vcard" className="btn btn-primary">
-            <Download className="h-4 w-4 mr-2" />
             Download vCard
           </a>
         </div>
