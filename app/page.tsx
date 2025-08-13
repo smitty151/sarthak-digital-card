@@ -101,6 +101,36 @@ const content = {
   ],
 }
 
+/**
+ * ExperienceTimeline component
+ *
+ * Displays a vertical timeline of job experiences. Each entry shows
+ * company, role, duration, and a brief description. The left rail + dots
+ * are styled to match the brand orange in light and dark themes.
+ */
+const ExperienceTimeline = ({
+  data,
+}: {
+  data: { company: string; role: string; duration: string; description: string }[];
+}) => (
+  <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4 md:pl-6">
+    {data.map((item, index) => (
+      <div key={index} className="mb-8 last:mb-0 relative">
+        {/* timeline dot */}
+        <span className="absolute -left-2 top-1 inline-block h-4 w-4 rounded-full bg-orange-500 ring-4 ring-orange-100 dark:ring-orange-900/40" />
+        <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">
+          {item.company}
+        </h3>
+        <p className="text-base md:text-lg font-medium mt-1">{item.role}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.duration}</p>
+        <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+          {item.description}
+        </p>
+      </div>
+    ))}
+  </div>
+);
+
 // ---------------------------------------------------------------------------
 // Toast
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
