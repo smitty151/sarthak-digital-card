@@ -188,23 +188,32 @@ const ExperienceTimeline = ({
   data,
 }: {
   data: { company: string; role: string; duration: string; description: string }[];
-}) => (
-  <div className="timeline">
-    {data.map((item, i) => (
-      <div key={i} className="timeline-item">
-        <span aria-hidden className="timeline-dot" />
-        <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">
-          {item.company}
-        </h3>
-        <p className="text-lg font-medium mt-1">{item.role}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{item.duration}</p>
-        <p className="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">
-          {item.description}
-        </p>
-      </div>
-    ))}
-  </div>
-);
+}) => {
+  return (
+    <div className="timeline">
+      <ul className="space-y-10">
+        {data.map((item, i) => (
+          <li key={i} className="timeline-item">
+            {/* Column for dot (centered between spine & text) */}
+            <div className="timeline-col flex items-start">
+              <span className="timeline-dot" />
+            </div>
+
+            {/* Main content */}
+            <div className="timeline-content">
+              <p className="text-[var(--primary-orange)] font-semibold">{item.company}</p>
+              <h3 className="text-xl md:text-2xl font-semibold mt-1">{item.role}</h3>
+              <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+              <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 // ---------------------------------------------------------------------------
 // Page
