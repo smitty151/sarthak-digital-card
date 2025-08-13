@@ -541,7 +541,7 @@ export default function Page() {
       {/* Hero */}
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="card overflow-hidden rounded2xl p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{ color: 'var(--ink)' }}>{content.name}</h1>
@@ -557,7 +557,7 @@ export default function Page() {
                 <div className="image-mask w-full max-w-[520px]">
                   <img
                     src={content.photo}
-                    alt{content.photoAlt}
+                    alt={content.photoAlt}
                     className="photo w-full h-auto object-cover"
                   />
                 </div>
