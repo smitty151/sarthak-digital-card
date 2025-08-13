@@ -144,8 +144,18 @@ function QRCard() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = `${window.location.origin}/api/vcard`; // scan to add contact
-    const opts = { width: 512, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
+    const url = `${window.location.origin}/api/vcard`;
+  
+    // Use accent blue in both themes; brighter in dark for contrast
+    const isDark = document.documentElement.classList.contains('dark');
+    const qrBlue = isDark ? '#60A5FA' : '#2563EB';  // matches your --accent-blue tokens
+  
+    const opts = {
+      width: size,
+      margin: 2,
+      color: { dark: qrBlue, light: '#FFFFFF' },
+    };
+  
     setBusy(true);
     QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
   }, []);
@@ -183,7 +193,7 @@ function QRCard() {
   );
 }
 
-/* ---------- ExperienceTimeline (scoped & aligned) ---------- */
+/* ---------- ExperienceTimeline (aligned to gutter center) ---------- */
 const ExperienceTimeline = ({
   data,
 }: {
@@ -194,12 +204,12 @@ const ExperienceTimeline = ({
       <ul className="space-y-10">
         {data.map((item, i) => (
           <li key={i} className="timeline-item">
-            {/* Column for dot (centered between spine & text) */}
-            <div className="timeline-col flex items-start">
+            {/* Gutter column (spine + dot axis) */}
+            <div className="timeline-col">
               <span className="timeline-dot" />
             </div>
 
-            {/* Main content */}
+            {/* Content column */}
             <div className="timeline-content">
               <p className="text-[var(--primary-orange)] font-semibold">{item.company}</p>
               <h3 className="text-xl md:text-2xl font-semibold mt-1">{item.role}</h3>
