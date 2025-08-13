@@ -167,3 +167,58 @@ body {
 @media (min-width: 640px) {
   .center-sm { display: initial; justify-content: initial; align-items: initial; }
 }
+
+/* ==========================================================================
+   Timeline (Experience) – scoped classes so it never bleed into other cards
+   ========================================================================== */
+.timeline {
+  position: relative;
+  /* slight nudge so the spine sits a bit inside the card */
+  margin-left: 0.25rem;
+}
+
+/* Orange vertical spine */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 12px;         /* center of the 12px dot below */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--primary-orange);
+  opacity: 0.9;
+}
+
+/* Each item: 24px column for the dot, plus content */
+.timeline-item {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 16px;
+}
+
+.timeline-col {
+  position: relative;
+}
+
+/* Solid orange dot with a soft translucent halo */
+.timeline-dot {
+  position: relative;
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--primary-orange);
+}
+
+/* halo */
+.timeline-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--primary-orange) 28%, transparent);
+}
+
+.timeline-content {
+  min-width: 0; /* keep long lines wrapping nicely */
+}
