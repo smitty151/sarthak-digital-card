@@ -1,23 +1,24 @@
-
 'use client'
 
 /**
  * Main page component for Sarthak's digital contacts & resume site.
- * This file assembles all of the UI elements, including data definitions,
- * reusable components, and the top-level page component.
+ * Mobile-friendly pass:
+ *  - Centers QR card contents on small screens
+ *  - Prevents long contact links from overflowing (uses compact buttons on mobile)
+ *  - Centers Files card controls on mobile
+ *  - Adds a simple mobile nav (hamburger) with anchors to sections
+ *  - Keeps earlier contrast improvements and SkillPill colors
  */
 
 import { useEffect, useState, useRef } from 'react'
 import QRCode from 'qrcode'
-import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
+import {
+  Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon,
+  Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode, Menu, X
+} from 'lucide-react';
 
 // ---------------------------------------------------------------------------
-// Custom content data
-//
-// This `content` object centralizes all of the editable data used on the page.
-// Update these values to change your name, title, contact details, biography,
-// quick stats, skills and experience timeline. Keeping this data separate
-// makes the rest of the component definitions purely presentational.
+// Content
 const content = {
   name: 'Sarthak Mittal',
   title: 'Strategy, Deals & Transformation | PE, VC, Consulting',
@@ -28,7 +29,7 @@ const content = {
   calendly: 'https://calendly.com/mittal-sart/30min',
   resumePdfUrl: '/resume.pdf',
   coverLetterPdfUrl: '/cover-letter.pdf',
-  photo: '/images/portrait_pro.webp', // Static image for reliability
+  photo: '/images/portrait_pro.webp',
   photoAlt: 'Sarthak Mittal professional portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
@@ -99,13 +100,13 @@ const content = {
 };
 
 // ---------------------------------------------------------------------------
-// Reusable components
+// Reusable bits
 
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
   if (!open) return null;
   const base = 'fixed left-1/2 -translate-x-1/2 bottom-6 z-50 rounded-full px-4 py-2 shadow-lg text-sm transition-opacity duration-300';
   const styles = kind === 'success' ? 'bg-emerald-600 text-white opacity-100' : 'bg-rose-600 text-white opacity-100';
-  return <div role="status" aria-live="polite" className={`${base} ${styles}`}>{message}</div>;
+  return <div role="status" aria-live="polite" className={base + ' ' + styles}>{message}</div>;
 }
 
 const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
@@ -113,42 +114,37 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => { if (ref.current) observer.unobserve(ref.current); };
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      className={\`transition-all duration-700 \${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}\`}
     >
       {children}
     </div>
   );
 };
 
-/* ---------- QRCard (helper) ---------- */
-/** Compact QR card that encodes `/api/vcard`.
- *  - Smaller size for visual balance.
- *  - Single CTA: Download vCard (copy button removed).
- */
+// QR vCard tile
 function QRCard() {
   const [png, setPng] = useState<string>('');
   const [busy, setBusy] = useState(false);
-  const size = 200; // compact
+  const size = 200;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = `${window.location.origin}/api/vcard`;
+    const url = \`\${window.location.origin}/api/vcard\`;
     const opts = { width: size, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
     setBusy(true);
     QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
@@ -156,24 +152,26 @@ function QRCard() {
 
   return (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
-      <div className="flex items-start gap-6 flex-col sm:flex-row sm:items-center">
-        {/* White tile guarantees contrast in both themes */}
-        <figure className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+      <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-6">
+        <div className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm mx-auto">
           {busy || !png ? (
-            <div className="h-[200px] w-[200px] flex items-center justify-center text-sm text-neutral-500">Generating…</div>
+            <div className="h-[200px] w-[200px] flex items-center justify-center text-sm text-neutral-500">
+              Generating…
+            </div>
           ) : (
-            <img src={png} alt="Scan to add Sarthak’s contact" width={size} height={size} className="rounded" />
+            <img src={png} alt="QR to add contact" width={size} height={size} className="rounded" />
           )}
-        </figure>
+        </div>
 
         <div className="flex-1">
-          <h3 className="text-xl font-semibold mb-1">Digital Card</h3>
+          <h3 className="text-xl font-semibold mb-2">Digital Card</h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
             Scan to add my contact to your phone. Works on iOS and Android.
           </p>
-
-          <div className="flex flex-wrap gap-2">
-            <a href="/api/vcard" className="btn btn-primary"><Download className="h-4 w-4 mr-2" />Download vCard</a>
+          <div className="flex justify-center sm:justify-start">
+            <a href="/api/vcard" className="btn btn-primary">
+              Download vCard
+            </a>
           </div>
         </div>
       </div>
@@ -190,23 +188,25 @@ export default function Page() {
   const [toastMsg, setToastMsg] = useState('');
   const [showResume, setShowResume] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') setRedirectUrl(`${window.location.origin}/thanks`);
+    if (typeof window !== 'undefined') setRedirectUrl(\`\${window.location.origin}/thanks\`);
   }, []);
 
+  // vCard downloader (still used by button in header on desktop if you keep it)
   const downloadVCard = () => {
     const lines = [
-      'BEGIN:VCARD','VERSION:3.0',`N:Mittal;Sarthak;;;`,`FN:${content.name}`,
-      content.email ? `EMAIL;TYPE=INTERNET,PREF:${content.email}` : '',
-      content.phone ? `TEL;TYPE=CELL:${content.phone}` : '',
-      content.calendly ? `URL:${content.calendly}` : '',
-      content.linkedin ? `X-SOCIALPROFILE;type=linkedin:${content.linkedin}` : '',
-      `ADR;TYPE=WORK:;;${content.location};;;;`,'END:VCARD',
-    ].filter(Boolean).join('\\n');
+      'BEGIN:VCARD','VERSION:3.0',\`N:Mittal;Sarthak;;;\`,\`FN:\${content.name}\`,
+      content.email ? \`EMAIL;TYPE=INTERNET,PREF:\${content.email}\` : '',
+      content.phone ? \`TEL;TYPE=CELL:\${content.phone}\` : '',
+      content.calendly ? \`URL:\${content.calendly}\` : '',
+      content.linkedin ? \`X-SOCIALPROFILE;type=linkedin:\${content.linkedin}\` : '',
+      \`ADR;TYPE=WORK:;;\${content.location};;;;\`,'END:VCARD',
+    ].filter(Boolean).join('\n');
     const a = document.createElement('a');
-    a.href = `data:text/vcard;charset=utf-8,${encodeURIComponent(lines)}`;
-    a.download = `${content.name.replace(/\\s+/g, '-')}.vcf`;
+    a.href = \`data:text/vcard;charset=utf-8,\${encodeURIComponent(lines)}\`;
+    a.download = \`\${content.name.replace(/\s+/g, '-')}.vcf\`;
     a.click();
   };
 
@@ -217,7 +217,7 @@ export default function Page() {
       setToastKind('success');
       setToastMsg('Contact copied!');
       setToastOpen(true);
-      setTimeout(() => { setCopied(false); setToastOpen(false); }, 2000);
+      setTimeout(() => { setCopied(false); setToastOpen(false); }, 1500);
     } catch {
       setToastKind('error');
       setToastMsg('Failed to copy contact.');
@@ -244,7 +244,8 @@ export default function Page() {
         const res = await fetch(endpoint, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
         if (res.ok) {
           setToastKind('success'); setToastMsg('Sent! Redirecting…'); setToastOpen(true);
-          form.reset(); setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
+          form.reset();
+          setTimeout(() => { window.location.href = redirectUrl || '/' }, 800);
         } else {
           throw new Error(await res.text() || 'Submission failed');
         }
@@ -288,18 +289,17 @@ export default function Page() {
     </section>
   );
 
+  // PDF card: center controls on mobile, left-align on md+
   const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
     <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-[var(--bg)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="flex flex-col items-center text-center md:flex-row md:items-center md:justify-between md:text-left gap-3">
         <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
-        <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
+        <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+          <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+            <Download className="h-4 w-4 mr-2" />Open PDF
+          </a>
           <button onClick={onToggle} className="btn btn-primary">
-            {expanded ? (
-              <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
-            ) : (
-              <><span className="hidden md:inline">Expand</span><ChevronDown className="h-4 w-4 md:hidden" /></>
-            )}
+            {expanded ? (<><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>) : (<><span className="hidden md:inline">Expand</span><ChevronDown className="h-4 w-4 md:hidden" /></>)}
           </button>
         </div>
       </div>
@@ -317,9 +317,9 @@ export default function Page() {
     const [isHovered, setIsHovered] = useState(false);
     return (
       <div className="relative">
-        {/* Light mode: dark grey pill; Dark mode: deep blue pill */}
         <span
-          className="inline-flex items-center rounded-full bg-neutral-800 text-white dark:bg-blue-900 dark:text-blue-100 px-3 py-1 text-sm font-medium cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-neutral-700 dark:hover:bg-blue-800"
+          className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium cursor-pointer transition-all duration-300 hover:scale-[1.03]
+                     bg-neutral-800 text-white dark:bg-blue-900 dark:text-blue-100"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -364,43 +364,12 @@ export default function Page() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[var(--bg)] text-[var(--ink)]">
-      <style>{`
-        :root {
-          --primary-orange: #f97316;
-          --accent-blue: #3b82f6;
-          --accent-green: #22c55e;
-          --bg-light: #fdf2e9;
-          --card-light: #ffffff;
-          --ink-light: #1e293b;
-          --muted-light: #64748b;
-          --ring-light: #f97316;
-          --bg-dark: #121212;
-          --card-dark: #1f1f1f;
-          --ink-dark: #f0f0f0;
-          --muted-dark: #a1a1aa;
-          --ring-dark: #f97316;
-        }
-
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        body { scroll-behavior: smooth; }
-
-        .animated-background {
-          background: linear-gradient(-45deg, var(--accent-blue), var(--accent-green), var(--primary-orange), var(--primary-orange));
-          background-size: 400% 400%;
-          animation: gradient-shift 15s ease infinite;
-        }
-
-        .card { @apply bg-[var(--card)] shadow-sm; }
-      `}</style>
-      <Toast open={toastOpen} kind={toastKind} message={toastMsg} />
+      {/* Header */}
       <header className="sticky top-0 z-30 border-b border-neutral-200/70 dark:border-neutral-800/60 backdrop-blur bg-[var(--bg)]/80 dark:bg-[var(--bg)]">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="text-sm font-bold font-header" style={{color: 'var(--ink)'}}>{content.name}</div>
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex gap-6 text-sm">
             <a href="#about" className="hover:text-[var(--accent)] transition-colors">About</a>
             <a href="#experience" className="hover:text-[var(--accent)] transition-colors">Experience</a>
@@ -408,16 +377,40 @@ export default function Page() {
             <a href="#contact" className="hover:text-[var(--accent)] transition-colors">Contact</a>
             <a href="#card" className="hover:text-[var(--accent)] transition-colors">Card</a>
           </nav>
+
           <div className="flex items-center gap-2">
-            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2" aria-label="Toggle dark mode">
+            <button onClick={() => document.documentElement.classList.toggle('dark')} className="btn btn-ghost p-2">
               <Sun className="h-5 w-5 block dark:hidden" />
               <Moon className="h-5 w-5 hidden dark:block" />
             </button>
-            {/* Header vCard button removed to keep the action in the Card section */}
+            {/* Mobile menu toggle */}
+            <button onClick={() => setNavOpen(v => !v)} className="md:hidden btn btn-ghost p-2" aria-label="Open menu">
+              {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile dropdown nav */}
+        {navOpen && (
+          <div className="md:hidden border-t border-neutral-200 dark:border-neutral-800 bg-[var(--bg)]">
+            <div className="max-w-5xl mx-auto px-4 py-3 grid gap-2 text-sm">
+              {[
+                ['About','#about'],
+                ['Experience','#experience'],
+                ['Files','#files'],
+                ['Contact','#contact'],
+                ['Card','#card'],
+              ].map(([label, href]) => (
+                <a key={href} href={href} onClick={() => setNavOpen(false)} className="py-2">
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
+      {/* Hero */}
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
           <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
@@ -439,6 +432,7 @@ export default function Page() {
         </SectionWithAnimation>
       </div>
 
+      {/* Main */}
       <main className="max-w-5xl mx-auto px-4 space-y-8 md:space-y-10 pb-16 relative z-10">
         <Section id="about" title="About" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <p className="leading-relaxed copy">{content.aboutBio}</p>
@@ -469,18 +463,8 @@ export default function Page() {
 
         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--primary-orange)]" />}> 
           <div className="space-y-6">
-            <PdfCard
-              title="Resume"
-              url={content.resumePdfUrl}
-              expanded={showResume}
-              onToggle={() => setShowResume(v => !v)}
-            />
-            <PdfCard
-              title="Cover Letter"
-              url={content.coverLetterPdfUrl}
-              expanded={showLetter}
-              onToggle={() => setShowLetter(v => !v)}
-            />
+            <PdfCard title="Resume" url={content.resumePdfUrl} expanded={showResume} onToggle={() => setShowResume(v => !v)} />
+            <PdfCard title="Cover Letter" url={content.coverLetterPdfUrl} expanded={showLetter} onToggle={() => setShowLetter(v => !v)} />
           </div>
         </Section>
 
@@ -491,8 +475,19 @@ export default function Page() {
               <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Location:</span> {content.location}</div>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center gap-2"><Linkedin className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>LinkedIn:</span> <a className="link" href={content.linkedin}>{content.linkedin}</a></div>
-              <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gray-400" /><span className="font-medium" style={{color: 'var(--ink)'}}>Calendly:</span> <a className="link" href={content.calendly}>{content.calendly}</a></div>
+              {/* Mobile: compact buttons; Desktop: raw link */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Linkedin className="h-4 w-4 text-gray-400" />
+                <span className="font-medium" style={{color: 'var(--ink)'}}>LinkedIn:</span>
+                <a className="btn btn-ghost px-3 py-1 h-8 inline-flex items-center md:hidden" href={content.linkedin} target="_blank" rel="noopener noreferrer">Open LinkedIn</a>
+                <a className="hidden md:inline text-[var(--accent-blue)] break-words" href={content.linkedin} target="_blank" rel="noopener noreferrer">{content.linkedin}</a>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Calendar className="h-4 w-4 text-gray-400" />
+                <span className="font-medium" style={{color: 'var(--ink)'}}>Calendly:</span>
+                <a className="btn btn-ghost px-3 py-1 h-8 inline-flex items-center md:hidden" href={content.calendly} target="_blank" rel="noopener noreferrer">Book 30 min</a>
+                <a className="hidden md:inline text-[var(--accent-blue)] break-words" href={content.calendly} target="_blank" rel="noopener noreferrer">{content.calendly}</a>
+              </div>
             </div>
           </div>
           <div>
@@ -501,7 +496,7 @@ export default function Page() {
           </div>
         </Section>
 
-        {/* Digital Card (QR) */}
+        {/* Card (QR) */}
         <Section id="card" title="Card" icon={<QrCode className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <QRCard />
         </Section>
