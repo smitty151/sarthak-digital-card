@@ -1,57 +1,153 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Higher-contrast Scandinavian theme */
+/* ==========================================================================
+   Theme tokens (class-based dark mode)
+   --------------------------------------------------------------------------
+   We intentionally avoid prefers-color-scheme here so system settings won't
+   override your in-page toggle. The .dark class on <html> is the single
+   source of truth.
+   ========================================================================== */
 :root {
-  --bg: #F4F1EA;              /* lighter linen */
-  --card: #FFFFFF;
-  --ink: #0F172A;              /* slate-900 for strong contrast */
-  --muted: #374151;            /* gray-700 for body copy, improved contrast */
-  --accent: #225E49;           /* deeper forest green */
-  --accent-ink: #FFFFFF;
-  --ring: 34 94 73;            /* r g b */
+  /* Core palette — light theme */
+  --bg: #F4EFE6;              /* linen/eggshell background */
+  --card: #FFFFFF;            /* card surface */
+  --ink: #111827;             /* primary text */
+  --muted: #667085;           /* secondary text */
+  --ring: #F97316;            /* focus ring / brand accent */
+  --primary-orange: #F97316;  /* brand */
+  --accent-blue: #2563EB;     /* links / accent */
+  --accent-green: #16A34A;
+
+  color-scheme: light; /* native widgets pick light by default */
 }
 
 .dark {
-  --bg: #0B0D0C;
-  --card: #1f1f1f;
-  --ink: #E7E9EC;              /* nearly white for dark mode */
-  --muted: #A1A1AA;            /* slate-400, improved contrast */
-  --accent: #2E7D60;
-  --accent-ink: #FFFFFF;
-  --ring: 46 125 96;
+  /* Core palette — dark theme */
+  --bg: #0E0F10;
+  --card: #181A1B;
+  --ink: #F3F4F6;
+  --muted: #A1A1AA;
+  --ring: #F97316;
+  --primary-orange: #F97316;
+  --accent-blue: #60A5FA;
+  --accent-green: #22C55E;
+
+  color-scheme: dark; /* native widgets pick dark when .dark is present */
 }
 
-html, body { height: 100%; }
-body { background-color: var(--bg); color: var(--muted); }
-
-/* Lighter texture so it doesn't wash out text */
-body::before {
-  content: ""; position: fixed; inset: 0; pointer-events: none;
-  background-image: url('/paper-texture.png'); background-size: 512px 512px;
-  opacity: .10; z-index: 0;
+/* ==========================================================================
+   Base styling
+   ========================================================================== */
+html, body {
+  background: var(--bg);
+  color: var(--ink);
 }
 
-/* Base card styling, borders removed for a cleaner look */
-.card { @apply bg-[var(--card)] rounded-2xl shadow-sm; }
+body {
+  @apply antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
 
-/* Custom buttons */
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-full text-sm px-4 py-2 transition; }
-.btn-ghost { @apply bg-transparent text-[var(--ink)] hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60; }
-.btn-primary { @apply bg-[var(--accent)] text-[var(--accent-ink)] hover:opacity-90; }
-.btn-secondary { @apply bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100 hover:opacity-90; }
+/* Make selections on brand */
+::selection {
+  background: color-mix(in oklab, var(--ring) 24%, transparent);
+}
 
-a.link { text-decoration: underline dotted; text-underline-offset: 4px; }
-a.link:hover { text-decoration-style: solid; }
+/* ==========================================================================
+   Reusable components
+   ========================================================================== */
 
-/* Copy defaults for better readability */
-p, .copy { color: var(--muted); }
-h1, h2, h3, h4 { color: var(--ink); }
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: 1rem;
+  box-shadow: 0 6px 24px rgba(17, 24, 39, 0.06);
+}
+.dark .card {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 24px rgba(0,0,0,0.35);
+}
 
-/* Removed border from pdf frame */
-.pdf-frame { @apply rounded-xl overflow-hidden; height: 52vh; }
-@media (min-width: 768px) { .pdf-frame { height: 48vh; } }
+/* Buttons */
+.btn {
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors outline-none;
+  border: 1px solid transparent;
+}
 
-/* Removed border from photo */
-.photo { @apply rounded-2xl shadow-md; }
+.btn:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px color-mix(in oklab, var(--ring) 35%, transparent);
+}
+
+/* Primary — orange brand */
+.btn-primary {
+  background: var(--primary-orange);
+  color: #fff;
+}
+.btn-primary:hover { filter: brightness(0.96); }
+.dark .btn-primary:hover { filter: brightness(1.06); }
+
+/* Secondary — neutral chip that contrasts with both backgrounds */
+.btn-secondary {
+  background: #E5E7EB;
+  color: #111827;
+  border-color: rgba(0,0,0,0.06);
+}
+.btn-secondary:hover { background: #D1D5DB; }
+.dark .btn-secondary {
+  background: #2A2C2F;
+  color: #F3F4F6;
+  border-color: #3A3D40;
+}
+.dark .btn-secondary:hover { background: #34373B; }
+
+/* Ghost — subtle outline button */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: rgba(0,0,0,0.10);
+}
+.btn-ghost:hover { background: rgba(0,0,0,0.04); }
+.dark .btn-ghost {
+  border-color: rgba(255,255,255,0.14);
+}
+.dark .btn-ghost:hover { background: rgba(255,255,255,0.06); }
+
+/* Links */
+.link {
+  color: var(--accent-blue);
+  text-underline-offset: 3px;
+}
+.link:hover { text-decoration: underline; }
+
+/* Keep long links from overflowing on phones */
+@media (max-width: 640px) {
+  .link { overflow-wrap: anywhere; word-break: break-word; }
+}
+
+/* PDF inline viewer height */
+.pdf-frame { height: min(70vh, 900px); }
+@media (max-width: 640px) { .pdf-frame { height: 70vh; } }
+
+/* Avatars / photos get a subtle ring so they don't blend into cards */
+.photo {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 10px 30px rgba(0,0,0,0.08);
+}
+.dark .photo {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 10px 30px rgba(0,0,0,0.50);
+}
+
+/* Helper for centering small tiles (e.g. QR) on mobile */
+.center-sm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (min-width: 640px) {
+  .center-sm { display: initial; justify-content: initial; align-items: initial; }
+}
