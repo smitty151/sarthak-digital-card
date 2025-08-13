@@ -553,7 +553,14 @@ export default function Page() {
                 </div>
               </div>
               <div className="order-1 md:order-2 flex justify-center">
-                <img src={content.photo} alt={content.photoAlt} className="photo w-full max-w-[520px] h-auto rounded-2xl object-cover border-none" />
+                {/* mask wrapper prevents any corner "peek" regardless of screen size */}
+                <div className="image-mask w-full max-w-[520px]">
+                  <img
+                    src={content.photo}
+                    alt{content.photoAlt}
+                    className="photo w-full h-auto object-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>
