@@ -1,0 +1,181 @@
+diff --git a/app/page.tsx b/app/page.tsx
+index 1111111..2222222 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,6 +1,6 @@
+ 'use client'
+
+-import { useEffect, useState, useRef } from 'react'
++import { useEffect, useState, useRef } from 'react'
+ import QRCode from 'qrcode'
+ import { Mail, MapPin, Linkedin, Calendar, Copy, ChevronDown, ChevronUp, Sun, Moon, Briefcase, Layers, BarChart2, FileText, BookOpen, Download, QrCode } from 'lucide-react';
+ 
+@@
+   );
+ };
+ 
++/**
++ * PdfEmbed
++ * Lazy-mounts the inline PDF preview only when the card is expanded
++ * and near the viewport (simple perf win on mobile).
++ */
++function PdfEmbed({ url, title }: { url: string; title: string }) {
++  const hostRef = useRef<HTMLDivElement | null>(null);
++  const [mounted, setMounted] = useState(false);
++  const [loaded, setLoaded] = useState(false);
++
++  useEffect(() => {
++    if (!hostRef.current) return;
++    const io = new IntersectionObserver(
++      (entries) => {
++        const visible = entries.some(e => e.isIntersecting);
++        if (visible) {
++          setMounted(true);
++          io.disconnect();
++        }
++      },
++      { rootMargin: '200px 0px' }
++    );
++    io.observe(hostRef.current);
++    return () => io.disconnect();
++  }, []);
++
++  return (
++    <div ref={hostRef} className="mt-4">
++      {!mounted ? (
++        <div className="pdf-skeleton" aria-hidden="true" />
++      ) : (
++        <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#0b0c0d]">
++          {/* Using <object> keeps things simple; some iOS builds don’t render inline.
++              We show helpful fallback text + link in that case. */}
++          <object
++            data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`}
++            type="application/pdf"
++            className="w-full pdf-frame"
++            onLoad={() => setLoaded(true)}
++          >
++            <div className="p-4 text-sm text-[var(--muted)]">
++              Couldn’t display <span className="font-medium">{title}</span> inline.
++              This can happen in some iOS browsers.{' '}
++              <a className="link" href={url} target="_blank" rel="noopener noreferrer">
++                Open the PDF in a new tab
++              </a>.
++            </div>
++          </object>
++          {!loaded && <div className="pdf-skeleton absolute inset-0 pointer-events-none" aria-hidden="true" />}
++        </div>
++      )}
++    </div>
++  );
++}
++
+ /**
+  * PdfCard component
+  *
+- * Displays a card for a PDF document (e.g. Resume or Cover Letter) with
+- * actions to open the PDF in a new tab or expand an inline preview. When
+- * `expanded` is true, a Tailwind-styled <object> element is shown with the
+- * PDF embedded; otherwise only the header and buttons are visible.
++ * Displays a card for a PDF (Resume or Cover Letter). High-contrast against
++ * the Files section, accessible controls, and lazy inline preview.
+  */
+-  const PdfCard = ({ title, url, expanded, onToggle }: { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
+-    // Card wrapper with its own tinted background and subtle border/shadow to
+-    // distinguish the PDF cards from the surrounding section.  Note that
+-    // we avoid placing JSX comments as standalone children, which would
+-    // break the JSX parser and cause a compile error.  Instead, this
+-    // description lives as a normal JavaScript comment.
+-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-[var(--bg)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+-        <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
+-        <div className="flex flex-wrap gap-2">
+-          {/* Use secondary styling for better contrast against the section background */}
+-          <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><Download className="h-4 w-4 mr-2" />Open PDF</a>
+-          <button onClick={onToggle} className="btn btn-primary">
+-            {expanded ? (
+-              <><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>
+-            ) : (
+-              <><span className="hidden md:inline">Expand</span><ChevronDown className="h-4 w-4 md:hidden" /></>
+-            )}
+-          </button>
+-        </div>
+-      </div>
+-      {expanded && (
+-        <div className="mt-4 pdf-frame">
+-          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`} type="application/pdf" className="w-full h-full">
+-            <p className="p-3">Your browser can’t display the PDF here. <a className="link" href={url} target="_blank" rel="noopener noreferrer">Open it in a new tab.</a></p>
+-          </object>
+-        </div>
+-      )}
+-    </div>
+-  );
++const PdfCard = ({
++  title,
++  url,
++  expanded,
++  onToggle,
++}: {
++  title: string;
++  url: string;
++  expanded: boolean;
++  onToggle: () => void;
++}) => {
++  return (
++    <div className="file-card rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
++      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
++        <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
++        <div className="flex flex-wrap gap-2">
++          <a
++            href={url}
++            target="_blank"
++            rel="noopener noreferrer"
++            className="btn btn-secondary"
++          >
++            <Download className="h-4 w-4 mr-2" />
++            Open PDF
++          </a>
++          <button
++            onClick={onToggle}
++            className="btn btn-primary"
++            aria-expanded={expanded}
++            aria-controls={`${title.toLowerCase().replace(/\s+/g, '-')}-preview`}
++          >
++            {expanded ? (
++              <>
++                <span className="hidden md:inline">Collapse</span>
++                <ChevronUp className="h-4 w-4 md:hidden" />
++              </>
++            ) : (
++              <>
++                <span className="hidden md:inline">Expand</span>
++                <ChevronDown className="h-4 w-4 md:hidden" />
++              </>
++            )}
++          </button>
++        </div>
++      </div>
++      {expanded && (
++        <div id={`${title.toLowerCase().replace(/\s+/g, '-')}-preview`}>
++          <PdfEmbed url={url} title={title} />
++        </div>
++      )}
++    </div>
++  );
++};
+@@
+         <Section id="files" title="Files" icon={<FileText className="h-6 w-6 text-[var(--primary-orange)]" />}> 
+           <div className="space-y-6">
+             <PdfCard
+               title="Resume"
+               url={content.resumePdfUrl}
+               expanded={showResume}
+               onToggle={() => setShowResume(v => !v)}
+             />
+             <PdfCard
+               title="Cover Letter"
+               url={content.coverLetterPdfUrl}
+               expanded={showLetter}
+               onToggle={() => setShowLetter(v => !v)}
+             />
+           </div>
+         </Section>
