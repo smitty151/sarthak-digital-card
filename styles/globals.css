@@ -203,7 +203,7 @@ body {
   );
   top: 0;
   bottom: 0;
-  width: var(--spine);
+  width: var(--tl-spine);
   background: var(--primary-orange);
   opacity: 0.9;
 }
