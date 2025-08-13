@@ -23,8 +23,8 @@
    /* Timeline geometry*/
    --tl-x: 28px;              /* horizon position of the vertical line*/
    --tl-w: 3px;               /* line thickness */
-   --tl-dot: 12px;            /* solid dot diameter */
-   --tl-halo: 16px;           /* out halo diameter */
+   --tl-dot: 10px;            /* solid dot diameter */
+   --tl-halo: 12px;           /* out halo diameter */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
 
   color-scheme: light; /* native widgets pick light by default */
