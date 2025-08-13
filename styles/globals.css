@@ -20,6 +20,12 @@
   --primary-orange: #F97316;  /* brand */
   --accent-blue: #2563EB;     /* links / accent */
   --accent-green: #16A34A;
+   /* Timeline geometry*/
+   --tl-x: 28px;              /* horizon position of the vertical line*/
+   --tl-w: 3px;               /* line thickness */
+   --tl-dot: 12px;            /* solid dot diameter */
+   --tl-halo: 16px;           /* out halo diameter */
+   --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
 
   color-scheme: light; /* native widgets pick light by default */
 }
@@ -112,13 +118,13 @@ body {
 .btn-secondary {
   background: #E5E7EB;
   color: #111827;
-  border-color: rgba(0,0,0,0.06);
+  border-color: transparent; /* remove outline */
 }
 .btn-secondary:hover { background: #D1D5DB; }
 .dark .btn-secondary {
   background: #2A2C2F;
   color: #F3F4F6;
-  border-color: #3A3D40;
+  border-color: transparent; /* remove outline */
 }
 .dark .btn-secondary:hover { background: #34373B; }
 
@@ -126,11 +132,11 @@ body {
 .btn-ghost {
   background: transparent;
   color: var(--ink);
-  border-color: rgba(0,0,0,0.10);
+  border-color: transparent; /* remove outline */
 }
 .btn-ghost:hover { background: rgba(0,0,0,0.04); }
 .dark .btn-ghost {
-  border-color: rgba(255,255,255,0.14);
+  border-color: transparent; /* remove outline */
 }
 .dark .btn-ghost:hover { background: rgba(255,255,255,0.06); }
 
@@ -174,61 +180,47 @@ body {
   .center-sm { display: initial; justify-content: initial; align-items: initial; }
 }
 
-/* ==========================================================================
-   Timeline (Experience) – scoped classes so it never bleed into other cards
-   ========================================================================== */
-.timeline {
-  position: relative;
-  /* slight nudge so the spine sits a bit inside the card */
-  margin-left: 0.25rem;
+/* ===== Timeline (centered dot on spine) ===== */
+.timeline{
+  position:relative;
+  /* space for line+dot before the text; tweak the +24px if you want more gap */
+  padding-left: calc(var(--tl-x,28px) + 24px);
 }
 
-/* Orange vertical spine */
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 11px;         /* center of the 10px dot below */
-  top: 0;
-  bottom: 0;
-  width: 2px;
+/* vertical orange spine */
+.timeline::before{
+  content:"";
+  position:absolute;
+  left: var(--tl-x,28px);
+  top:0; bottom:0;
+  width: var(--tl-w,3px);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--primary-orange) 85%, transparent),
+    var(--primary-orange)
+  );
+  border-radius:999px;
+}
+
+.timeline-item{
+  position:relative;
+  padding: 18px 0 28px; /* vertical rhythm between entries */
+}
+
+/* the dot is absolutely positioned and centered on the line */
+.timeline-dot{
+  position:absolute;
+  left: var(--tl-x,28px);
+  top: var(--tl-offset,1.6rem);       /* nudges dot to the company’s first line */
+  transform: translate(-50%,-50%);    /* centers dot on the spine */
+  width: var(--tl-dot,12px);
+  height: var(--tl-dot,12px);
   background: var(--primary-orange);
-  opacity: 0.9;
-}
-
-/* Each item: 28px column for the dot, plus content */
-.timeline-item {
-  display: grid;
-  grid-template-columns: 28px 1fr;
-  column-gap: 16px;
-}
-
-.timeline-col {
-  position: relative;
-}
-
-/* Solid orange dot with a soft translucent halo */
-.timeline-dot {
-  position: relative;
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--primary-orange);
-  /* roughly aligns the dot's vertical center with the first line of company */
-  margin-top: 0.55rem;
-}
-
-/* halo */
-.timeline-dot::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, var(--primary-orange) 22%, transparent);
-}
-
-.timeline-content {
-  min-width: 0; /* keep long lines wrapping nicely */
+  border-radius:999px;
+  /* small soft halo without a pseudo-element */
+  box-shadow:
+    0 0 0 calc((var(--tl-halo,20px) - var(--tl-dot,12px))/2)
+    color-mix(in oklab, var(--primary-orange) 20%, transparent);
 }
 
 /* File cards: subtle tint that contrasts with the section background */
