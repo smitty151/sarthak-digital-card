@@ -101,29 +101,6 @@ const content = {
   ],
 }
 
-/* ---------- ExperienceTimeline (aligned bullets) ---------- */
-const ExperienceTimeline = ({
-  data,
-}: {
-  data: { company: string; role: string; duration: string; description: string }[];
-}) => (
-  <ol className="relative border-l-2 border-[var(--primary-orange)]/80 pl-6 sm:pl-8">
-    {data.map((item, i) => (
-      <li key={i} className="relative pl-6 sm:pl-8 pb-8 last:pb-0">
-        {/* dot sits on the line; ring matches card so it never visually “eats” first letters */}
-        <span
-          className="absolute left-[-8px] sm:left-[-10px] top-1 h-3 w-3 rounded-full bg-[var(--primary-orange)] ring-4 ring-[var(--card)]"
-          aria-hidden="true"
-        />
-        <h3 className="text-xl font-semibold font-header text-[var(--primary-orange)]">{item.company}</h3>
-        <p className="text-lg font-medium mt-1">{item.role}</p>
-        <p className="text-sm text-[var(--muted)]">{item.duration}</p>
-        <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">{item.description}</p>
-      </li>
-    ))}
-  </ol>
-);
-
 // ---------------------------------------------------------------------------
 // Toast
 function Toast({ open, kind = 'success', message }: { open: boolean, kind?: 'success' | 'error', message: string }) {
@@ -160,50 +137,78 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
 
 // ---------------------------------------------------------------------------
 // QR Card
+/* ---------- QRCard (compact, centered on mobile) ---------- */
 function QRCard() {
   const [png, setPng] = useState<string>('');
   const [busy, setBusy] = useState(false);
-  const GEN_SIZE = 260; // generate at a comfortable resolution
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const url = `${window.location.origin}/api/vcard`; // scan to add contact
-    const opts = { width: GEN_SIZE, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
+    const opts = { width: 512, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
     setBusy(true);
     QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
   }, []);
 
   return (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm overflow-hidden">
-      {/* grid keeps things centered on mobile, aligned on desktop */}
-      <div className="grid items-center gap-6 sm:grid-cols-[auto,1fr]">
-        {/* White tile guarantees contrast in both themes */}
-        <div className="justify-self-center sm:justify-self-start">
-          <div className="rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
-            {busy || !png ? (
-              <div className="h-[220px] w-[220px] sm:h-[260px] sm:w-[260px] flex items-center justify-center text-sm text-neutral-500">
-                Generating…
-              </div>
-            ) : (
-              <img
-                src={png}
-                alt="QR to add contact"
-                className="h-[220px] w-[220px] sm:h-[260px] sm:w-[260px] rounded"
-              />
-            )}
-          </div>
+    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-start items-center gap-6">
+        {/* White tile guarantees contrast in both themes; image scales responsively */}
+        <div className="rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+          {busy || !png ? (
+            <div className="h-[220px] w-[220px] sm:h-[280px] sm:w-[280px] flex items-center justify-center text-sm text-neutral-500">
+              Generating…
+            </div>
+          ) : (
+            <img
+              src={png}
+              alt="QR to add contact"
+              className="w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] rounded"
+            />
+          )}
         </div>
 
-        <div className="text-center sm:text-left">
+        <div className="flex-1 text-center sm:text-left">
           <h3 className="text-xl font-semibold mb-2">Digital Card</h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
             Scan to add my contact to your phone. Works on iOS and Android.
           </p>
-          <a href="/api/vcard" className="btn btn-primary inline-flex justify-center">
-            <Download className="h-4 w-4 mr-2" /> Download vCard
+          <a href="/api/vcard" className="btn btn-primary">
+            <Download className="h-4 w-4 mr-2" />
+            Download vCard
           </a>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ---------- ExperienceTimeline (scoped & aligned) ---------- */
+function ExperienceTimeline({
+  data,
+}: {
+  data: { company: string; role: string; duration: string; description: string }[];
+}) {
+  return (
+    <div className="timeline">
+      <ul className="space-y-10">
+        {data.map((item, i) => (
+          <li key={i} className="timeline-item">
+            <div className="timeline-col">
+              {/* the dot sits in its own column so it lines up with the company label */}
+              <span className="timeline-dot mt-[2px]" />
+            </div>
+            <div className="timeline-content">
+              <p className="text-[var(--primary-orange)] font-semibold">{item.company}</p>
+              <h3 className="text-xl md:text-2xl font-semibold mt-1">{item.role}</h3>
+              <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+              <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
