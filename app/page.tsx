@@ -315,34 +315,122 @@ export default function Page() {
     </section>
   )
 
-  // PDF Card
-  const PdfCard = ({ title, url, expanded, onToggle }:
-    { title: string; url: string; expanded: boolean; onToggle: () => void }) => (
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-4 md:p-5 bg-[var(--bg)] dark:bg-[var(--bg)] shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
-        <div className="flex flex-wrap gap-2">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
-            <Download className="h-4 w-4 mr-2" />Open PDF
-          </a>
-          <button onClick={onToggle} className="btn btn-primary">
-            {expanded ? (<><span className="hidden md:inline">Collapse</span><ChevronUp className="h-4 w-4 md:hidden" /></>)
-                      : (<><span className="hidden md:inline">Expand</span><ChevronDown className="h-4 w-4 md:hidden" /></>)}
-          </button>
-        </div>
+  //-------------------------------------------------------------------------------//
+  /**
+  * PdfEmbed
+  * Lazy-mounts the inline PDF preview only when the card is expanded
+  * and near the viewport + iOS fallback (simple perf win on mobile)
+  */
+  //-------------------------------------------------------------------------------//
+  
+  function PdfEmbed({ url, title }: { url: string; title: string }) {
+    const hostRef = useRef<HTMLDivElement | null>(null);
+    const [mounted, setMounted] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+  
+    useEffect(() => {
+      if (!hostRef.current) return;
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some(e => e.isIntersecting)) {
+            setMounted(true);
+            io.disconnect();
+          }
+        },
+        { rootMargin: '200px 0px' }
+      );
+      io.observe(hostRef.current);
+      return () => io.disconnect();
+    }, []);
+  
+    return (
+      <div ref={hostRef} className="mt-4 relative">
+        {!mounted ? (
+          <div className="pdf-skeleton" aria-hidden="true" />
+        ) : (
+          <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#0b0c0d]">
+            <object
+              data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`}
+              type="application/pdf"
+              className="w-full pdf-frame"
+              onLoad={() => setLoaded(true)}
+            >
+              <div className="p-4 text-sm text-[var(--muted)]">
+                Couldn’t display <span className="font-medium">{title}</span> inline.
+                This can happen in some iOS browsers.{' '}
+                <a className="link" href={url} target="_blank" rel="noopener noreferrer">
+                  Open the PDF in a new tab
+                </a>.
+              </div>
+            </object>
+            {!loaded && (
+              <div className="pdf-skeleton absolute inset-0 pointer-events-none" aria-hidden="true" />
+            )}
+          </div>
+        )}
       </div>
-      {expanded && (
-        <div className="mt-4 pdf-frame">
-          <object data={`${url}#page=1&zoom=page-width&toolbar=0&navpanes=0&statusbar=0`}
-                  type="application/pdf" className="w-full h-full">
-            <p className="p-3">Your browser can’t display the PDF here.
-              <a className="link" href={url} target="_blank" rel="noopener noreferrer"> Open it in a new tab.</a>
-            </p>
-          </object>
+    );
+  }
+  
+  // PDF Card
+  // High-contrast file card + lazy PDF preview
+  const PdfCard = ({
+    title,
+    url,
+    expanded,
+    onToggle,
+  }: {
+    title: string;
+    url: string;
+    expanded: boolean;
+    onToggle: () => void;
+  }) => {
+    const previewId = `${title.toLowerCase().replace(/\s+/g, '-')}-preview`;
+  
+    return (
+      <div className="file-card rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Open PDF
+            </a>
+            <button
+              onClick={onToggle}
+              className="btn btn-primary"
+              aria-expanded={expanded}
+              aria-controls={previewId}
+            >
+              {expanded ? (
+                <>
+                  <span className="hidden md:inline">Collapse</span>
+                  <ChevronUp className="h-4 w-4 md:hidden" />
+                </>
+              ) : (
+                <>
+                  <span className="hidden md:inline">Expand</span>
+                  <ChevronDown className="h-4 w-4 md:hidden" />
+                </>
+              )}
+            </button>
+          </div>
         </div>
-      )}
-    </div>
-  )
+  
+        {expanded && (
+          <div id={previewId}>
+            <PdfEmbed url={url} title={title} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
 
   // Skill pill
   const SkillPill = ({ name, description }: { name: string, description: string }) => {
