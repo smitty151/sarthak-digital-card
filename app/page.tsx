@@ -101,34 +101,27 @@ const content = {
   ],
 }
 
-/**
- * ExperienceTimeline component
- *
- * Displays a vertical timeline of job experiences. Each entry shows
- * company, role, duration, and a brief description. The left rail + dots
- * are styled to match the brand orange in light and dark themes.
- */
+/* ---------- ExperienceTimeline (aligned bullets) ---------- */
 const ExperienceTimeline = ({
   data,
 }: {
   data: { company: string; role: string; duration: string; description: string }[];
 }) => (
-  <div className="relative border-l-2 border-orange-300 dark:border-orange-500 pl-4 md:pl-6">
-    {data.map((item, index) => (
-      <div key={index} className="mb-8 last:mb-0 relative">
-        {/* timeline dot */}
-        <span className="absolute -left-2 top-1 inline-block h-4 w-4 rounded-full bg-orange-500 ring-4 ring-orange-100 dark:ring-orange-900/40" />
-        <h3 className="text-xl font-semibold font-header text-orange-600 dark:text-orange-400">
-          {item.company}
-        </h3>
-        <p className="text-base md:text-lg font-medium mt-1">{item.role}</p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.duration}</p>
-        <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
-          {item.description}
-        </p>
-      </div>
+  <ol className="relative border-l-2 border-[var(--primary-orange)]/80 pl-6 sm:pl-8">
+    {data.map((item, i) => (
+      <li key={i} className="relative pl-6 sm:pl-8 pb-8 last:pb-0">
+        {/* dot sits on the line; ring matches card so it never visually “eats” first letters */}
+        <span
+          className="absolute left-[-8px] sm:left-[-10px] top-1 h-3 w-3 rounded-full bg-[var(--primary-orange)] ring-4 ring-[var(--card)]"
+          aria-hidden="true"
+        />
+        <h3 className="text-xl font-semibold font-header text-[var(--primary-orange)]">{item.company}</h3>
+        <p className="text-lg font-medium mt-1">{item.role}</p>
+        <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+        <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">{item.description}</p>
+      </li>
     ))}
-  </div>
+  </ol>
 );
 
 // ---------------------------------------------------------------------------
@@ -168,51 +161,51 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
 // ---------------------------------------------------------------------------
 // QR Card
 function QRCard() {
-  const [png, setPng] = useState<string>('')
-  const [busy, setBusy] = useState(false)
-  const size = 280 // generated size; we scale down on mobile for crispness
+  const [png, setPng] = useState<string>('');
+  const [busy, setBusy] = useState(false);
+  const GEN_SIZE = 260; // generate at a comfortable resolution
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const url = `${window.location.origin}/api/vcard`
-    const opts = { width: size, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } }
-    setBusy(true)
-    QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false))
-  }, [])
+    if (typeof window === 'undefined') return;
+    const url = `${window.location.origin}/api/vcard`; // scan to add contact
+    const opts = { width: GEN_SIZE, margin: 2, color: { dark: '#111827', light: '#FFFFFF' } };
+    setBusy(true);
+    QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
+  }, []);
 
   return (
-    <div className="rounded-2xl border border-neutral-300 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm center-sm">
-      <div className="flex items-start gap-6 flex-col sm:flex-row sm:items-center">
-        <div className="shrink-0 rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
-          {busy || !png ? (
-            <div className="h-[220px] w-[220px] md:h-[280px] md:w-[280px] flex items-center justify-center text-sm text-neutral-500">
-              Generating…
-            </div>
-          ) : (
-            <img
-              src={png}
-              alt="QR to add contact"
-              className="rounded w-[220px] h-[220px] md:w-[280px] md:h-[280px]"
-              width={size}
-              height={size}
-            />
-          )}
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-700 p-5 md:p-6 bg-[var(--card)] shadow-sm overflow-hidden">
+      {/* grid keeps things centered on mobile, aligned on desktop */}
+      <div className="grid items-center gap-6 sm:grid-cols-[auto,1fr]">
+        {/* White tile guarantees contrast in both themes */}
+        <div className="justify-self-center sm:justify-self-start">
+          <div className="rounded-xl p-3 bg-white ring-1 ring-neutral-200 shadow-sm">
+            {busy || !png ? (
+              <div className="h-[220px] w-[220px] sm:h-[260px] sm:w-[260px] flex items-center justify-center text-sm text-neutral-500">
+                Generating…
+              </div>
+            ) : (
+              <img
+                src={png}
+                alt="QR to add contact"
+                className="h-[220px] w-[220px] sm:h-[260px] sm:w-[260px] rounded"
+              />
+            )}
+          </div>
         </div>
 
-        <div className="flex-1 sm:min-w-[280px]">
+        <div className="text-center sm:text-left">
           <h3 className="text-xl font-semibold mb-2">Digital Card</h3>
           <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-4">
             Scan to add my contact to your phone. Works on iOS and Android.
           </p>
-          <div className="flex gap-2 justify-center sm:justify-start">
-            <a href="/api/vcard" className="btn btn-primary">
-              <Download className="h-4 w-4 mr-2" /> Download vCard
-            </a>
-          </div>
+          <a href="/api/vcard" className="btn btn-primary inline-flex justify-center">
+            <Download className="h-4 w-4 mr-2" /> Download vCard
+          </a>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // ---------------------------------------------------------------------------
