@@ -23,11 +23,11 @@
    /* Timeline geometry*/
    --tl-x: 28px;              /* horizon position of the vertical line*/
    --tl-w: 3px;               /* line thickness */
-   --tl-gutter: 56px;         /* how far into the left margin the spine/dots sit */
+   --tl-gutter: 18px;         /* how far into the left margin the spine/dots sit */
    --tl-col: 24px;            /* width of the dot column */
    --tl-spine: 2px;           /* thickness of the line */
    --tl-dot: 10px;            /* solid dot diameter */
-   --tl-halo: 12px;           /* out halo diameter */
+   --tl-halo: 4px;           /* out halo diameter */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
 
   color-scheme: light; /* native widgets pick light by default */
