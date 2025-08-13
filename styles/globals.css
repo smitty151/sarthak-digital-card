@@ -180,48 +180,69 @@ body {
   .center-sm { display: initial; justify-content: initial; align-items: initial; }
 }
 
-/* ===== Timeline (centered dot on spine) ===== */
-.timeline{
-  position:relative;
-  /* space for line+dot before the text; tweak the +24px if you want more gap */
-  padding-left: calc(var(--tl-x,28px) + 24px);
+/* ==== Timeline (Experience) – robust, no drift ==== */
+.timeline {
+  /* tune these to taste */
+  --gutter: 44px;           /* width of the left column that holds spine & dot */
+  --spine: 2px;             /* thickness of the orange vertical line */
+  --dot: 10px;              /* solid dot size */
+  --halo: 18px;             /* soft halo diameter */
+  position: relative;
+  margin-left: 0;           /* no nudge needed anymore */
 }
 
-/* vertical orange spine */
-.timeline::before{
-  content:"";
-  position:absolute;
-  left: var(--tl-x,28px);
-  top:0; bottom:0;
-  width: var(--tl-w,3px);
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--primary-orange) 85%, transparent),
-    var(--primary-orange)
-  );
-  border-radius:999px;
-}
-
-.timeline-item{
-  position:relative;
-  padding: 18px 0 28px; /* vertical rhythm between entries */
-}
-
-/* the dot is absolutely positioned and centered on the line */
-.timeline-dot{
-  position:absolute;
-  left: var(--tl-x,28px);
-  top: var(--tl-offset,1.6rem);       /* nudges dot to the company’s first line */
-  transform: translate(-50%,-50%);    /* centers dot on the spine */
-  width: var(--tl-dot,12px);
-  height: var(--tl-dot,12px);
+/* Orange vertical spine perfectly centered in the gutter */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--gutter) / 2 - var(--spine) / 2);
+  top: 0;
+  bottom: 0;
+  width: var(--spine);
   background: var(--primary-orange);
-  border-radius:999px;
-  /* small soft halo without a pseudo-element */
-  box-shadow:
-    0 0 0 calc((var(--tl-halo,20px) - var(--tl-dot,12px))/2)
-    color-mix(in oklab, var(--primary-orange) 20%, transparent);
+  opacity: 0.95;
 }
+
+/* Each row = gutter column + flexible content column */
+.timeline-item {
+  display: grid;
+  grid-template-columns: var(--gutter) 1fr;
+  column-gap: 0; /* content starts right after the gutter */
+}
+
+/* Dot column (relative so the dot can be absolutely centered) */
+.timeline-col {
+  position: relative;
+}
+
+/* Solid orange dot, centered on the spine */
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  top: 0.9rem;                 /* aligns dot with company label line-height */
+  transform: translateX(-50%);
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 9999px;
+  background: var(--primary-orange);
+}
+
+/* Soft halo */
+.timeline-dot::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--halo);
+  height: var(--halo);
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--primary-orange) 22%, transparent);
+  pointer-events: none;
+}
+
+/* Keep long lines wrapping nicely */
+.timeline-content { min-width: 0; }
 
 /* File cards: subtle tint that contrasts with the section background */
 .file-card {
