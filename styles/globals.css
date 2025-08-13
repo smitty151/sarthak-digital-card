@@ -23,6 +23,9 @@
    /* Timeline geometry*/
    --tl-x: 28px;              /* horizon position of the vertical line*/
    --tl-w: 3px;               /* line thickness */
+   --tl-gutter: 56px;   
+   --tl-col: 24px;            /* width of the dot column */
+   --tl-spine: 2px;           /* thickness of the line */
    --tl-dot: 10px;            /* solid dot diameter */
    --tl-halo: 12px;           /* out halo diameter */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
@@ -182,12 +185,6 @@ body {
 
 /* ==== Timeline (Experience) – robust, no drift ==== */
 .timeline {
-  /* tune these to taste */
-  --gutter: 56px;           /* width of the left column that holds spine & dot */
-  --tl-col: 24px;           /* width of the dot column */
-  --spine: 2px;             /* thickness of the orange vertical line */
-  --dot: 10px;              /* solid dot size */
-  --halo: 12px;             /* soft halo diameter */
   position: relative;
   
   /* Pull the whole dot column into the card’s left gutter… */
