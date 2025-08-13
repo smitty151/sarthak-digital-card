@@ -187,7 +187,7 @@ body {
   --tl-col: 24px;           /* width of the dot column */
   --spine: 2px;             /* thickness of the orange vertical line */
   --dot: 10px;              /* solid dot size */
-  --halo: 18px;             /* soft halo diameter */
+  --halo: 12px;             /* soft halo diameter */
   position: relative;
   
   /* Pull the whole dot column into the card’s left gutter… */
@@ -233,7 +233,7 @@ body {
   height: var(--tl-dot);
   border-radius: 9999px;
   background: var(--primary-orange);
-  margin-top: 0.5rem;          /* lines up with first text line */
+  margin-top: 0.4rem;          /* lines up with first text line */
 }
 
 /* Soft halo */
