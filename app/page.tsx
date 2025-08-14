@@ -35,8 +35,8 @@ const content = {
   photoAlt: 'Sarthak Mittal professional portrait',
   aboutBio: `I build value at the intersection of investing and execution. My background spans PwC Deals (transaction diligence), Nitya Capital (acquisitions & portfolio value creation), and a founder-operator stint at OurEarth BioPlastics. I like translating models into operating rhythms—clear KPIs, decision cadences, and accountability—so the plan actually happens. Sector experience includes real assets and consumer/industrial adjacencies; comfort with analytics (Python/SQL/BI) helps me pressure‑test assumptions and make performance visible.`,
   quickStats: [
-    { title: 'Years of Experience', value: '7+' },
-    { title: 'Deals Closed', value: '15+' },
+    { title: 'Years of Experience', value: '8+' },
+    { title: 'Deals Closed', value: '20+' },
     { title: 'Capital Deployed', value: '$1.6 billion+' },
   ],
   skills: {
@@ -85,7 +85,7 @@ const content = {
       role: 'Enterprise & Functional Strategy',
       duration: 'May 2025 – Present • Bengaluru, India',
       summary:
-        'Service Delivery Risk and strategy-to-execution across pilot playbooks, KPI trees, TOM/RACI, and governance.',
+        'Strategy-to-execution for large enterprises: operating model design, KPI trees, governance rhythms, and benefits realization across priority programs.',
       highlights: [
         'Support a Fortune 50 client on quality audits, workflow assessments, contract audits, and access-management PMO.',
         'Build value cases and benefits-tracking models (Excel/Python/SQL) to institutionalize decision cadence.',
@@ -238,6 +238,15 @@ function ExperienceTimeline({
               className="timeline-item grid"
               onMouseEnter={() => setOpen(i)}
               onMouseLeave={() => setOpen((v) => (v === i ? null : v))}
+              onClick={() => setOpen((v) => (v === i ? null : i))}      // <-- tap/click toggle
+              role="button"                                             // a11y
+              tabIndex={0}                                              // focusable
+              onKeyDown={(e) => {                                       // keyboard support
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setOpen((v) => (v === i ? null : i));
+                }
+              }}
             >
               {/* dot column */}
               <div className="timeline-col">
@@ -655,7 +664,7 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="experience" title="Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
+        <Section id="experience" title="Core Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <ExperienceTimeline data={content.timeline} />
         </Section>
 
