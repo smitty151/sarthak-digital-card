@@ -79,24 +79,45 @@ const content = {
       { name: 'Client Presentations', description: 'Delivering professional presentations to clients.' },
     ],
   },
-  timeline: [
+    timeline: [
     {
       company: 'PwC',
-      role: 'Enterprise & Foundational Strategy',
-      duration: '2025-Present',
-      description: 'Translate strategy into execution via pilot playbooks, KPI trees, TOM/RACI, and cadence/RAID governance.',
+      role: 'Enterprise & Functional Strategy',
+      duration: 'May 2025 – Present • Bengaluru, India',
+      summary:
+        'Service Delivery Risk and strategy-to-execution across pilot playbooks, KPI trees, TOM/RACI, and governance.',
+      highlights: [
+        'Support a Fortune 50 client on quality audits, workflow assessments, contract audits, and access-management PMO.',
+        'Build value cases and benefits-tracking models (Excel/Python/SQL) to institutionalize decision cadence.',
+        'Partner with Compliance/Risk to align AI/Privacy/Model-risk controls in delivery workflows.',
+        'Designed a 3-phase transformation blueprint (0–6, 6–12, 12–24 months) with quantified value levers and KPI tree.',
+      ],
     },
     {
       company: 'PwC',
-      role: 'Deals Transformation',
-      duration: '2022-2024',
-      description: 'Delivered playbooks for diligence, IMOs and SMOs.',
+      role: 'M&A Deals Transformation',
+      duration: 'Aug 2022 – Feb 2024 • Chicago & Bengaluru',
+      summary:
+        'Integration/separation playbooks and synergy valuation across multiple industries.',
+      highlights: [
+        'Co-led synergy valuation & tracking for an $8B transaction; automated Excel DB to capture $25M synergies; cut reporting by 30+ hours/week.',
+        'Delivered Day-1/100, TSA catalogues, risk, change, and comms across several programs.',
+        'Supported commercial diligence for a $50M deal (tech & healthcare benefits) in a $1.8B TAM; market sizing, competitive scan, interviews.',
+        'Onboarded/managed consultants to institutionalize diligence, IMO and SMO playbooks.',
+      ],
     },
     {
       company: 'Nitya Capital',
-      role: 'Acquisitions & Value Creation',
-      duration: '2017-2022',
-      description: 'Sourced, underwrote, and onboarded acquisitions; led value creation via KPIs and risk-based sampling.',
+      role: 'Acquisitions & Asset Management',
+      duration: 'Sep 2017 – Jun 2022 • Houston, USA',
+      summary:
+        'Full-cycle acquisitions and portfolio value creation across multifamily & student housing.',
+      highlights: [
+        'Completed 16+ acquisitions ($1.67B) & 5+ dispositions ($300M); evaluated 43+ assets end-to-end.',
+        'Built DCFs, waterfalls, NAV & sensitivity models; created KPI dashboards/templates.',
+        'Cut DD effort via risk-based sampling & standardization; 66% fewer property inspections.',
+        'Led analysis for $1.5B+ AUM (~55 properties / 16k units); kept deal cycles on track with brokers, lenders, legal and ops.',
+      ],
     },
   ],
 }
@@ -145,18 +166,16 @@ function QRCard() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+  
     const url = `${window.location.origin}/api/vcard`;
-
-    // Use accent blue that matches theme
-    const isDark = document.documentElement.classList.contains('dark');
-    const qrBlue = isDark ? '#60A5FA' : '#2563EB';
-
-    const opts = {
-      width: size,                 // << now defined
-      margin: 2,
-      color: { dark: qrBlue, light: '#FFFFFF' },
-    };
-
+  
+    // read CSS var so it follows your theme tokens
+    const cssBlue =
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--qr-dark')
+        .trim() || '#2563EB';
+  
+    const opts = { width: size, margin: 2, color: { dark: cssBlue, light: '#FFFFFF' } };
     setBusy(true);
     QRCode.toDataURL(url, opts).then(setPng).finally(() => setBusy(false));
   }, []);
@@ -188,37 +207,78 @@ function QRCard() {
   );
 }
 
-/* ---------- ExperienceTimeline (aligned to gutter center) ---------- */
-const ExperienceTimeline = ({
+/* ---------- ExperienceTimeline (interactive) ---------- */
+function ExperienceTimeline({
   data,
 }: {
-  data: { company: string; role: string; duration: string; description: string }[];
-}) => {
-  return (
-    <div className="timeline">
-      <ul className="space-y-10">
-        {data.map((item, i) => (
-          <li key={i} className="timeline-item">
-            {/* Gutter column (spine + dot axis) */}
-            <div className="timeline-col">
-              <span className="timeline-dot" />
-            </div>
+  data: {
+    company: string;
+    role: string;
+    duration: string;
+    summary: string;
+    highlights?: string[];
+  }[];
+}) {
+  const [open, setOpen] = useState<number | null>(null);
 
-            {/* Content column */}
-            <div className="timeline-content">
-              <p className="text-[var(--primary-orange)] font-semibold">{item.company}</p>
-              <h3 className="text-xl md:text-2xl font-semibold mt-1">{item.role}</h3>
-              <p className="text-sm text-[var(--muted)]">{item.duration}</p>
-              <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                {item.description}
-              </p>
-            </div>
-          </li>
-        ))}
+  return (
+    <div className="timeline relative">
+      {/* Rounded spine element (thicker + rounded ends) */}
+      <span
+        aria-hidden
+        className="timeline-spine absolute top-0 bottom-0 rounded-full"
+      />
+
+      <ul className="space-y-10">
+        {data.map((item, i) => {
+          const isOpen = open === i;
+          return (
+            <li
+              key={i}
+              className="timeline-item grid"
+              onMouseEnter={() => setOpen(i)}
+              onMouseLeave={() => setOpen((v) => (v === i ? null : v))}
+            >
+              {/* dot column */}
+              <div className="timeline-col">
+                <span className="timeline-dot" />
+              </div>
+
+              {/* content */}
+              <div className="timeline-content">
+                <p className="text-[var(--primary-orange)] font-semibold">
+                  {item.company}
+                </p>
+                <h3 className="text-xl md:text-2xl font-semibold mt-1">
+                  {item.role}
+                </h3>
+                <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+                <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  {item.summary}
+                </p>
+
+                {/* expandable highlights */}
+                {item.highlights?.length ? (
+                  <div
+                    className={`transition-all duration-300 ease-out overflow-hidden ${
+                      isOpen ? 'max-h-[480px] mt-3 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <ul className="list-disc pl-5 space-y-1 text-[15px] text-neutral-700 dark:text-neutral-200">
+                      {item.highlights.map((h, idx) => (
+                        <li key={idx}>{h}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
-};
+}
 
 // ---------------------------------------------------------------------------
 // Page
