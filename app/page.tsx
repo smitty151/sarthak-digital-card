@@ -664,7 +664,7 @@ export default function Page() {
           </div>
         </Section>
 
-        <Section id="experience" title="Core Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
+        <Section id="experience" title="Highlighted Experience" icon={<Briefcase className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <ExperienceTimeline data={content.timeline} />
         </Section>
 
