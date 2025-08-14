@@ -25,7 +25,7 @@
    /*--tl-w: 3px;               /* line thickness */
    --tl-gutter: 10px;         /* how far into the left margin the spine/dots sit */
    --tl-col: 24px;            /* width of the dot column */
-   --tl-spine: 3px;           /* thickness of the line */
+   --tl-spine: 4px;           /* thickness of the line */
    --tl-dot: 10px;            /* solid dot diameter */
    --tl-halo: 4px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
@@ -194,44 +194,31 @@ body {
   padding-left: calc(var(--tl-gutter) + var(--tl-col)); 
 }
 
-/* Orange vertical spine perfectly centered in the gutter */
-.timeline::before {
-  content: "";
-  position: absolute;
+.timeline-spine {
   left: calc(
     var(--tl-gutter) + (var(--tl-col) / 2) - (var(--tl-spine) / 2)
   );
-  top: 0;
-  bottom: 0;
   width: var(--tl-spine);
-  border-radius: 9999px; /* rounded ends */
-   /* soft vertical glow so the spine feels embossed */
-   background: linear-gradient (
-      180deg,
-      color-mix(in oklab, var(--primary-orange) 92%, white) 0%,
-      var(--primary-orange) 90%,
-      color-mix(in oklab, var(--primary-orange) 85%, black) 100%
-   );
-   box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--primary-orange) 22%, transparent),
-      0 0 18px color-mix(in oklab, var(--primary-orange) 20%, transparent);
+  background: var(--primary-orange);
+  /* soft vertical gradient so it feels “lit” */
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--primary-orange) 85%, #fff 15%),
+    var(--primary-orange)
+  );
 }
 
-/* Each row = gutter column + flexible content column */
 .timeline-item {
-  display: grid;
   grid-template-columns: var(--tl-col) 1fr;
-  column-gap: 16px; /* content starts right after the gutter */
+  column-gap: 16px;
 }
 
-/* Dot column (relative so the dot can be absolutely centered) */
 .timeline-col {
   position: relative;
-  display: flex;               /* centers the dot in the column */
-  justify-content: center;
+  display: flex;
+  justify-content: center; /* center dot in the column */
 }
 
-/* Solid orange dot, centered on the spine */
 .timeline-dot {
   position: relative;
   display: block;
@@ -239,35 +226,36 @@ body {
   height: var(--tl-dot);
   border-radius: 9999px;
   background: var(--primary-orange);
-  margin-top: 0.4rem;          /* lines up with first text line */
-  box-shadow:
-     0 0 0 1px color-mix(in oklab, var(--primary-orange) 25%, transparent),
-     0 6px 10px rgba(0,0,0,0.06); /* subtle lift */
+  margin-top: 0.4rem; /* aligns to first text line */
 }
 
-/* Soft halo */
 .timeline-dot::after {
   content: "";
   position: absolute;
   inset: calc(var(--tl-halo) * -1);
   border-radius: 9999px;
-  background: color-mix(in oklab, var(--primary-orange) 22%, transparent);
+  background: color-mix(in oklab, var(--primary-orange) 20%, transparent);
 }
 
-/* Keep long lines wrapping nicely */
-.timeline-content { 
-   min-width: 0; 
+/* optional lift on hover to make items feel “live” */
+.timeline-item:hover .timeline-content {
+  transform: translateY(-1px);
+  transition: transform 160ms ease;
 }
 
-/* Subtle row hover on large screens */
-@media (hover:hover) and (pointer:fine) {
-   .timeline-item { transition: transofmr .18s ease, background-color .18s ease; }
-   .timeline-item:hover { transofrm: translateY(-1px); }
+/* ==== QR: use accent blue for the dark squares ==== */
+:root {
+  --qr-dark: var(--accent-blue);
 }
+.dark {
+  --qr-dark: var(--accent-blue);
+}
+
+/*--------------------------------------------------------------------------------------------*/
 
 /* File cards: subtle tint that contrasts with the section background */
 .file-card {
-  background: color-mix(in oklab, var(--bg) 94%, #ffffff 6%);
+  background: color-mix(in oklab, var(--bg) 90%, #ffffff 10%);
 }
 .dark .file-card {
   background: #111315;
