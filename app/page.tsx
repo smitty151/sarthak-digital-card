@@ -236,9 +236,14 @@ function ExperienceTimeline({
         {data.map((item, i) => {
           const isOpen = open === i;
           return (
-            <li 
-              key={i} 
-              className="timeline-item grid"
+            <li key={i} className="timeline-item">
+              {/* dot column */}
+              <div className="timeline-col">
+                <span className={`timeline-dot transition-transform ${isOpen ? 'scale-110' : ''}`} />
+              </div>
+
+              {/* content */}
+              <div className="timeline-content">
                 {/* Make the header a real <button> so mobile toggles on first tap */}
                 <button
                   type="button"
@@ -248,14 +253,6 @@ function ExperienceTimeline({
                   onMouseEnter={canHover ? () => setOpen(i) : undefined}
                   onMouseLeave={canHover ? () => setOpen(v => (v === i ? null : v)) : undefined}
                 >
-              >
-              {/* dot column */}
-              <div className="timeline-col">
-                <span className="timeline-dot" />
-              </div>
-
-              {/* content */}
-              <div className="timeline-content">
                   <p className="text-[var(--primary-orange)] font-semibold group-focus-visible:underline">
                     {item.company}
                   </p>
