@@ -27,7 +27,7 @@
    --tl-col: 24px;            /* width of the dot column */
    --tl-spine: 4px;           /* thickness of the line */
    --tl-dot: 10px;            /* solid dot diameter */
-   --tl-halo: 4px;           /* halo padding around the dot */
+   --tl-halo: 2px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
 
   color-scheme: light; /* native widgets pick light by default */
