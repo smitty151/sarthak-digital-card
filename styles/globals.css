@@ -243,6 +243,12 @@ body {
   transition: transform 160ms ease;
 }
 
+/* To help single-tap function on mobile*/
+.tap {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 /* ==== QR: use accent blue for the dark squares ==== */
 :root {
   --qr-dark: var(--accent-blue);
