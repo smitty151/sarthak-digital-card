@@ -215,11 +215,14 @@ function ExperienceTimeline({
     company: string;
     role: string;
     duration: string;
-    summary: string;
-    highlights?: string[];
+    summary: string;          // short always visible line
+    highlights?: string[];    // optional bullet points shown when expanded
   }[];
 }) {
   const [open, setOpen] = useState<number | null>(null);
+  const canHover =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover)').matches;
 
   return (
     <div className="timeline relative">
@@ -233,38 +236,34 @@ function ExperienceTimeline({
         {data.map((item, i) => {
           const isOpen = open === i;
           return (
-            <li
-              key={i}
-              className="timeline-item grid"
-              onMouseEnter={() => setOpen(i)}
-              onMouseLeave={() => setOpen((v) => (v === i ? null : v))}
-              onClick={() => setOpen((v) => (v === i ? null : i))}      // <-- tap/click toggle
-              role="button"                                             // a11y
-              tabIndex={0}                                              // focusable
-              onKeyDown={(e) => {                                       // keyboard support
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setOpen((v) => (v === i ? null : i));
-                }
-              }}
-            >
+            <li key={i} className="timeline-item">
               {/* dot column */}
               <div className="timeline-col">
-                <span className="timeline-dot" />
+                <span className={`timeline-dot transition-transform ${isOpen ? 'scale-110' : ''}`} />
               </div>
 
               {/* content */}
               <div className="timeline-content">
-                <p className="text-[var(--primary-orange)] font-semibold">
-                  {item.company}
-                </p>
-                <h3 className="text-xl md:text-2xl font-semibold mt-1">
-                  {item.role}
-                </h3>
-                <p className="text-sm text-[var(--muted)]">{item.duration}</p>
-                <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                  {item.summary}
-                </p>
+                {/* Make the header a real <button> so mobile toggles on first tap */}
+                <button
+                  type="button"
+                  className="w-full text-left group outline-none"
+                  aria-expanded={isOpen}
+                  onClick={() => setOpen(v => (v === i ? null : i))}
+                  onMouseEnter={canHover ? () => setOpen(i) : undefined}
+                  onMouseLeave={canHover ? () => setOpen(v => (v === i ? null : v)) : undefined}
+                >
+                  <p className="text-[var(--primary-orange)] font-semibold group-focus-visible:underline">
+                    {item.company}
+                  </p>
+                  <h3 className="text-xl md:text-2xl font-semibold mt-1">
+                    {item.role}
+                  </h3>
+                  <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+                  <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                    {item.summary}
+                  </p>
+                </button>
 
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
