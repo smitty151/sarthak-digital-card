@@ -249,7 +249,7 @@ function ExperienceTimeline({
               {/* Make the header a real <button> so mobile toggles on first tap */}
               <button
                   type="button"
-                  className="timeline-content block text-left focus:outline-none"
+                  className="timeline-content block text-left cursor-pointer focus:outline-none"
                   onClick={() => setOpen(v => (v === i ? null : i))}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
