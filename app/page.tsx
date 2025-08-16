@@ -235,36 +235,45 @@ function ExperienceTimeline({
       <ul className="space-y-10">
         {data.map((item, i) => {
           const isOpen = open === i;
-          return (
-            <li key={i} className="timeline-item">
+          return (          
+            <li 
+              key={i} 
+              className="timeline-item tap"
+              onMouseEnter={canHover ? () => setOpen(i) : undefined}
+              onMouseLeave={canHover ? () => setOpen(v => (v === i ? null : v)) : undefined}
+              >
               {/* dot column */}
               <div className="timeline-col">
                 <span className={`timeline-dot transition-transform ${isOpen ? 'scale-110' : ''}`} />
               </div>
-
-              {/* content */}
-              <div className="timeline-content">
-                {/* Make the header a real <button> so mobile toggles on first tap */}
-                <button
+              {/* Make the header a real <button> so mobile toggles on first tap */}
+              <button
                   type="button"
-                  className="w-full text-left group outline-none"
-                  aria-expanded={isOpen}
+                  className="timeline-content block text-left focus:outline-none"
                   onClick={() => setOpen(v => (v === i ? null : i))}
-                  onMouseEnter={canHover ? () => setOpen(i) : undefined}
-                  onMouseLeave={canHover ? () => setOpen(v => (v === i ? null : v)) : undefined}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setOpen(v => (v === i ? null : i));
+                    }
+                  }}
+                  aria-expanded={isOpen}
                 >
-                  <p className="text-[var(--primary-orange)] font-semibold group-focus-visible:underline">
-                    {item.company}
-                  </p>
-                  <h3 className="text-xl md:text-2xl font-semibold mt-1">
-                    {item.role}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)]">{item.duration}</p>
-                  <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                <p className="text-[var(--primary-orange)] font-semibold">
+                  {item.company}
+                </p>
+                <h3 className="text-xl md:text-2xl font-semibold mt-1">
+                  {item.role}
+                </h3>
+                <p className="text-sm text-[var(--muted)]">
+                  {item.duration}
+                </p>
+                {/* optional one-line summary (shown always if you have it) */}
+                {typeof item.summary === 'string' && item.summary.trim() && (
+                  <p className="mt-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
                     {item.summary}
                   </p>
-                </button>
-
+                )}
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
                   <div
@@ -278,8 +287,8 @@ function ExperienceTimeline({
                       ))}
                     </ul>
                   </div>
-                ) : null}
-              </div>
+                ) : null}      
+              </button>
             </li>
           );
         })}
