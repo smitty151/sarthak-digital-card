@@ -19,6 +19,15 @@ import {
   Download, QrCode, Menu
 } from 'lucide-react'
 
+// ----------------- Timeline Types -----------------
+type TimelineItem = {
+  company: string;
+  role: string;
+  duration: string;
+  summary?: string; // a one-line, shown always
+  highlights?; string[]; // bullets, shown when expanded
+};
+
 // ---------------------------------------------------------------------------
 // Custom content data
 const content = {
@@ -81,7 +90,7 @@ const content = {
   },
     timeline: [
     {
-      company: 'PwC',
+      company: 'PricewaterhouseCoopers (PwC)',
       role: 'Enterprise & Functional Strategy',
       duration: 'May 2025 – Present • Bengaluru, India',
       summary:
@@ -94,9 +103,9 @@ const content = {
       ],
     },
     {
-      company: 'PwC',
+      company: 'PricewaterhouseCoopers (PwC)',
       role: 'M&A Deals Transformation',
-      duration: 'Aug 2022 – Feb 2024 • Chicago & Bengaluru',
+      duration: 'Aug 2022 – Feb 2024 • Chicago, USA & Bengaluru, India',
       summary:
         'Integration/separation playbooks and synergy valuation across multiple industries.',
       highlights: [
@@ -208,17 +217,7 @@ function QRCard() {
 }
 
 /* ---------- ExperienceTimeline (interactive) ---------- */
-function ExperienceTimeline({
-  data,
-}: {
-  data: {
-    company: string;
-    role: string;
-    duration: string;
-    summary: string;
-    highlights?: string[];
-  }[];
-}) {
+function ExperienceTimeline({ data }: { data: TimelineItem[] }){
   const [open, setOpen] = useState<number | null>(null);
   const canHover =
     typeof window !== "undefined" &&
@@ -270,29 +269,21 @@ function ExperienceTimeline({
                 <p className="text-sm text-[var(--muted)]">
                   {item.duration}
                 </p>
-                {open === i && (
+                {item.summary && (
+                  <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                    {item.summary}
+                  </p>
+                )}
+                {/* expandable highlights */}
+                {open === i && Array.isArray(item.highlights) && item.highlights.length > 0 && (
                   <ul className="mt-3 space-y-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
-                    {item.summary.map((ach, j) => (
+                    {item.highlights.map((ach, j) => (
                       <li key={j} className="list-disc pl-5">
                         {ach}
                       </li>
                     ))}
                   </ul>
                 )}
-                {/* expandable highlights */}
-                {item.highlights?.length ? (
-                  <div
-                    className={`transition-all duration-300 ease-out overflow-hidden ${
-                      isOpen ? 'max-h-[480px] mt-3 opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <ul className="list-disc pl-5 space-y-1 text-[15px] text-neutral-700 dark:text-neutral-200">
-                      {item.highlights.map((h, idx) => (
-                        <li key={idx}>{h}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
               </div>
             </li>
           );
