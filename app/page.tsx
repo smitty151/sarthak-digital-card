@@ -277,7 +277,7 @@ function ExperienceTimeline({
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
                   <div
-                    className={`transition-all duration-5000 ease-in-out overflow-hidden ${
+                    className={`transition-all duration-10000 ease-in-out overflow-hidden ${
                       isOpen ? 'max-h-[480px] mt-3 opacity-90' : 'max-h-0 opacity-0'
                     }`}
                   >
