@@ -220,7 +220,10 @@ function ExperienceTimeline({
   }[];
 }) {
   const [open, setOpen] = useState<number | null>(null);
-
+  const canHover =
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: hover)").matches;
+  
   return (
     <div className="timeline relative">
       {/* Rounded spine element (thicker + rounded ends) */}
@@ -235,14 +238,17 @@ function ExperienceTimeline({
           return (
             <li
               key={i}
-              className="timeline-item grid"
-              onMouseEnter={() => setOpen(i)}
-              onMouseLeave={() => setOpen((v) => (v === i ? null : v))}
-              onClick={() => setOpen((v) => (v === i ? null : i))}      // <-- tap/click toggle
-              role="button"                                             // a11y
-              tabIndex={0}                                              // focusable
-              onKeyDown={(e) => {                                       // keyboard support
-                if (e.key === 'Enter' || e.key === ' ') {
+              className="timeline-item tap"
+              // Hover only on devices that actually support hover:
+              onMouseEnter={canHover ? () => setOpen(i) : undefined}
+              onMouseLeave={canHover ? () => setOpen((v) => (v === i ? null : v)) : undefined}
+              // One tap/click toggles immediately everywhere:
+              onClick={() => setOpen((v) => (v === i ? null : i))}
+              role="button"
+              aria-expanded={open === i}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
                   setOpen((v) => (v === i ? null : i));
                 }
@@ -261,11 +267,18 @@ function ExperienceTimeline({
                 <h3 className="text-xl md:text-2xl font-semibold mt-1">
                   {item.role}
                 </h3>
-                <p className="text-sm text-[var(--muted)]">{item.duration}</p>
-                <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                  {item.summary}
+                <p className="text-sm text-[var(--muted)]">
+                  {item.duration}
                 </p>
-
+                {open === i && (
+                  <ul className="mt-3 space-y-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+                    {item.summary.map((ach, j) => (
+                      <li key={j} className="list-disc pl-5">
+                        {ach}
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
                   <div
