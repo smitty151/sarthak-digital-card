@@ -359,7 +359,7 @@ function ExperienceTimeline({
                     />
                   </button>
                 </div>
-                <h3 className="text-l md:text-l font-semibold mt-1">
+                <h3 className="text-l md:text-xl font-semibold mt-1">
                   {item.role}
                 </h3>
                 <p className="text-sm text-[var(--muted)]">
