@@ -150,7 +150,7 @@ const SectionWithAnimation = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <div ref={ref} className={`transition-h-o-m ease-spring duration-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+    <div ref={ref} className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       {children}
     </div>
   )
@@ -453,7 +453,7 @@ export default function Page() {
     { id: string, title: string, children: React.ReactNode, action?: React.ReactNode, icon: React.ReactNode }) => (
     <section id={id} className="scroll-mt-24">
       <SectionWithAnimation>
-        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-h-o-m ease-spring duration-600">
+        <div className="card p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {icon}
@@ -540,7 +540,7 @@ export default function Page() {
     const previewId = `${title.toLowerCase().replace(/\s+/g, '-')}-preview`;
   
     return (
-      <div className="file-card rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 shadow-md hover:shadow-lg transition-h-o-m ease-spring duration-600">
+      <div className="file-card rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 shadow-md hover:shadow-lg transition-all duration-300 ease-in-out">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <h3 className="text-lg md:text-xl font-semibold font-header">{title}</h3>
           <div className="flex flex-wrap gap-2">
@@ -590,7 +590,7 @@ export default function Page() {
     return (
       <div className="relative">
         <span
-          className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium cursor-pointer transition-h-o-m ease-spring duration-600 hover:scale-105
+          className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium cursor-pointer transition-all duration-300 hover:scale-105
                      bg-neutral-800 text-white hover:bg-neutral-900
                      dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
           onMouseEnter={() => setIsHovered(true)}
@@ -693,7 +693,7 @@ export default function Page() {
       {/* Hero */}
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card overflow-hidden rounded2xl p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-h-o-m ease-spring duration-600">
+          <div className="card overflow-hidden rounded2xl p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{ color: 'var(--ink)' }}>{content.name}</h1>
@@ -732,7 +732,7 @@ export default function Page() {
         <Section id="quick-stats" title="Quick Stats" icon={<BarChart2 className="h-6 w-6 text-[var(--primary-orange)]" />}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {content.quickStats.map((stat, index) => (
-              <div key={index} className="bg-neutral-50 dark:bg-[var(--bg)] p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-h-o-m ease-spring duration-600">
+              <div key={index} className="bg-neutral-50 dark:bg-[var(--bg)] p-5 rounded-xl shadow-sm hover:scale-[1.05] hover:shadow-lg transition-all duration-300">
                 <h3 className="text-3xl font-bold text-[var(--primary-orange)] font-header">{stat.value}</h3>
                 <p className="text-sm text-[var(--muted)] mt-1">{stat.title}</p>
               </div>
