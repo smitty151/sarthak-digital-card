@@ -11,15 +11,15 @@
    source of truth.
    ========================================================================== */
 :root {
-  /* Core palette — light theme */
-  --bg: #F4EFE6;              /* linen/eggshell background */
-  --card: #FFFFFF;            /* card surface */
-  --ink: #111827;             /* primary text */
-  --muted: #667085;           /* secondary text */
-  --ring: #F97316;            /* focus ring / brand accent */
-  --primary-orange: #F97316;  /* brand */
-  --accent-blue: #2563EB;     /* links / accent */
-  --accent-green: #16A34A;
+   /* Core palette — light theme */
+   --bg: #F4EFE6;              /* linen/eggshell background */
+   --card: #FFFFFF;            /* card surface */
+   --ink: #111827;             /* primary text */
+   --muted: #667085;           /* secondary text */
+   --ring: #F97316;            /* focus ring / brand accent */
+   --primary-orange: #F97316;  /* brand */
+   --accent-blue: #2563EB;     /* links / accent */
+   --accent-green: #16A34A;
    /* Timeline geometry*/
    /*--tl-x: 28px;              /* horizon position of the vertical line*/
    /*--tl-w: 3px;               /* line thickness */
@@ -30,42 +30,43 @@
    --tl-halo: 2px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
    --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+   --tl-nudge-y: 3px;   /* fine-tunes the dot’s vertical position */
    color-scheme: light; /* native widgets pick light by default */
 }
 
 .dark {
-  /* Core palette — dark theme */
-  --bg: #0E0F10;
-  --card: #181A1B;
-  --ink: #F3F4F6;
-  --muted: #A1A1AA;
-  --ring: #F97316;
-  --primary-orange: #F97316;
-  --accent-blue: #60A5FA;
-  --accent-green: #22C55E;
+   /* Core palette — dark theme */
+   --bg: #0E0F10;
+   --card: #181A1B;
+   --ink: #F3F4F6;
+   --muted: #A1A1AA;
+   --ring: #F97316;
+   --primary-orange: #F97316;
+   --accent-blue: #60A5FA;
+   --accent-green: #22C55E;
 
-  color-scheme: dark; /* native widgets pick dark when .dark is present */
+   color-scheme: dark; /* native widgets pick dark when .dark is present */
 }
 
 /* ==========================================================================
    Base styling
    ========================================================================== */
 html, body {
-  background: var(--bg);
-  color: var(--ink);
+   background: var(--bg);
+   color: var(--ink);
 }
 
 body {
-  @apply antialiased;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
+   @apply antialiased;
+   text-rendering: optimizeLegibility;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   scroll-behavior: smooth;
 }
 
 /* Make selections on brand */
 ::selection {
-  background: color-mix(in oklab, var(--ring) 24%, transparent);
+   background: color-mix(in oklab, var(--ring) 24%, transparent);
 }
 
 /* ==========================================================================
@@ -74,39 +75,39 @@ body {
 
 /* Cards */
 .card {
-  background: var(--card);
-  border-radius: 1rem;
-  box-shadow: 0 6px 24px rgba(17, 24, 39, 0.06);
-  isolation: isolate;        /* <-- keeps pseudo-elements from earlier sections out */
-  /*overflow: hidden;          /* <-- prevents corner overlaps inside a section */
+   background: var(--card);
+   border-radius: 1rem;
+   box-shadow: 0 6px 24px rgba(17, 24, 39, 0.06);
+   isolation: isolate;        /* <-- keeps pseudo-elements from earlier sections out */
+   /*overflow: hidden;          /* <-- prevents corner overlaps inside a section */
 }
 .dark .card {
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 24px rgba(0,0,0,0.35);
+   box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 12px 24px rgba(0,0,0,0.35);
 }
 
 /* Buttons */
 .btn {
-  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors outline-none;
-  border: 1px solid transparent;
+   @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors outline-none;
+   border: 1px solid transparent;
 }
 
 .btn:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px color-mix(in oklab, var(--ring) 35%, transparent);
+   outline: 2px solid transparent;
+   box-shadow: 0 0 0 2px var(--ring), 0 0 0 6px color-mix(in oklab, var(--ring) 35%, transparent);
 }
 
 /* Primary — GREEN (accent) */
 .btn-primary {
-  background: var(--accent-green); /* light: #16A34A */
-  color: #ffffff;                  /* strong contrast on linen bg */
+   background: var(--accent-green); /* light: #16A34A */
+   color: #ffffff;                  /* strong contrast on linen bg */
 }
 /* Slightly darker on hover in light */
 .btn-primary:hover { filter: brightness(0.94); }
 
 /* Dark theme: a touch brighter green + near-black text for AAA contrast */
 .dark .btn-primary {
-  background: var(--accent-green); /* dark: #22C55E */
-  color: #0B1020;                  /* readable on bright green */
+   background: var(--accent-green); /* dark: #22C55E */
+   color: #0B1020;                  /* readable on bright green */
 }
 .dark .btn-primary:hover { filter: brightness(1.08); }
 
@@ -119,40 +120,40 @@ body {
 
 /* Secondary — neutral chip that contrasts with both backgrounds */
 .btn-secondary {
-  background: #E5E7EB;
-  color: #111827;
-  border-color: transparent; /* remove outline */
+   background: #E5E7EB;
+   color: #111827;
+   border-color: transparent; /* remove outline */
 }
 .btn-secondary:hover { background: #D1D5DB; }
 .dark .btn-secondary {
-  background: #2A2C2F;
-  color: #F3F4F6;
-  border-color: transparent; /* remove outline */
+   background: #2A2C2F;
+   color: #F3F4F6;
+   border-color: transparent; /* remove outline */
 }
 .dark .btn-secondary:hover { background: #34373B; }
 
 /* Ghost — subtle outline button */
 .btn-ghost {
-  background: transparent;
-  color: var(--ink);
-  border-color: transparent; /* remove outline */
+   background: transparent;
+   color: var(--ink);
+   border-color: transparent; /* remove outline */
 }
 .btn-ghost:hover { background: rgba(0,0,0,0.04); }
 .dark .btn-ghost {
-  border-color: transparent; /* remove outline */
+   border-color: transparent; /* remove outline */
 }
 .dark .btn-ghost:hover { background: rgba(255,255,255,0.06); }
 
 /* Links */
 .link {
-  color: var(--accent-blue);
-  text-underline-offset: 3px;
+   color: var(--accent-blue);
+   text-underline-offset: 3px;
 }
 .link:hover { text-decoration: underline; }
 
 /* Keep long links from overflowing on phones */
 @media (max-width: 640px) {
-  .link { overflow-wrap: anywhere; word-break: break-word; }
+   .link { overflow-wrap: anywhere; word-break: break-word; }
 }
 
 /* PDF inline viewer height */
@@ -161,51 +162,51 @@ body {
 
 /* Avatars / photos get a subtle ring so they don't blend into cards */
 .photo {
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 10px 30px rgba(0,0,0,0.08);
+   box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 10px 30px rgba(0,0,0,0.08);
 }
 .dark .photo {
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 10px 30px rgba(0,0,0,0.50);
+   box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 10px 30px rgba(0,0,0,0.50);
 }
 
 /* Mask wrapper to ensure rounded image never “peeks” past the card corners */
 .image-mask {
-  border-radius: 1rem;       /* match rounded-2xl look */
-  overflow: hidden;
+   border-radius: 1rem;       /* match rounded-2xl look */
+   overflow: hidden;
 }
 
 /* Helper for centering small tiles (e.g. QR) on mobile */
 .center-sm {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+   display: flex;
+   justify-content: center;
+   align-items: center;
 }
 @media (min-width: 640px) {
-  .center-sm { display: initial; justify-content: initial; align-items: initial; }
+   .center-sm { display: initial; justify-content: initial; align-items: initial; }
 }
 
 /* ==== Timeline (Experience) – robust, no drift ==== */
 .timeline {
-  position: relative;
-  
-  /* Pull the whole dot column into the card’s left gutter… */
-  margin-left: calc(var(--tl-gutter) * -1);
-
-  /* …while giving the content enough left padding to clear it */
-  padding-left: calc(var(--tl-gutter) + var(--tl-col)); 
+   position: relative;
+   
+   /* Pull the whole dot column into the card’s left gutter… */
+   margin-left: calc(var(--tl-gutter) * -1);
+   
+   /* …while giving the content enough left padding to clear it */
+   padding-left: calc(var(--tl-gutter) + var(--tl-col)); 
 }
 
 .timeline-spine {
-  left: calc(
+   left: calc(
     var(--tl-gutter) + (var(--tl-col) / 2) - (var(--tl-spine) / 2)
-  );
-  width: var(--tl-spine);
-  background: var(--primary-orange);
-  /* soft vertical gradient so it feels “lit” */
-  background-image: linear-gradient(
+   );
+   width: var(--tl-spine);
+   background: var(--primary-orange);
+   /* soft vertical gradient so it feels “lit” */
+   background-image: linear-gradient(
     to bottom,
     color-mix(in oklab, var(--primary-orange) 85%, #fff 15%),
     var(--primary-orange)
-  );
+   );
 }
 
 .timeline-item {
@@ -223,41 +224,43 @@ body {
 }
 
 .timeline-dot {
-  position: relative;
-  display: block;
-  width: var(--tl-dot);
-  height: var(--tl-dot);
-  border-radius: 9999px;
-  background: var(--primary-orange);
-  margin-top: 0.4rem; /* aligns to first text line */
+   position: relative;
+   display: block;
+   width: var(--tl-dot);
+   height: var(--tl-dot);
+   border-radius: 9999px;
+   background: var(--primary-orange);
+   margin-top: 0.4rem; /* aligns to first text line */
+   transform: translateY(var(--tl-nudge-y)); /* precise vertical alignment */
+
 }
 
 .timeline-dot::after {
-  content: "";
-  position: absolute;
-  inset: calc(var(--tl-halo) * -1);
-  border-radius: 9999px;
-  background: color-mix(in oklab, var(--primary-orange) 20%, transparent);
+   content: "";
+   position: absolute;
+   inset: calc(var(--tl-halo) * -1);
+   border-radius: 9999px;
+   background: color-mix(in oklab, var(--primary-orange) 20%, transparent);
 }
 
 /* optional lift on hover to make items feel “live” */
 .timeline-item:hover .timeline-content {
-  transform: translateY(-1px);
-  transition: transform 2400ms cubic-bezier(.2,.8,.2,1);
+   transform: translateY(-1px);
+   transition: transform 2400ms cubic-bezier(.2,.8,.2,1);
 }
 
 /* To help single-tap function on mobile*/
 .tap {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+   -webkit-tap-highlight-color: transparent;
+   touch-action: manipulation;
 }
 
 /* ==== QR: use accent blue for the dark squares ==== */
 :root {
-  --qr-dark: var(--accent-blue);
+   --qr-dark: var(--accent-blue);
 }
 .dark {
-  --qr-dark: var(--accent-blue);
+   --qr-dark: var(--accent-blue);
 }
 
 /*--------------------------------------------------------------------------------------------*/
