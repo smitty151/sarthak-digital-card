@@ -30,7 +30,7 @@
    --tl-halo: 2px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
    --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
-   --tl-nudge-y: 9px;   /* fine-tunes the dot’s vertical position */
+   --tl-nudge-y: 8px;   /* fine-tunes the dot’s vertical position */
    color-scheme: light; /* native widgets pick light by default */
 }
 
