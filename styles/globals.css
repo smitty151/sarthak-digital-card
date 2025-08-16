@@ -209,14 +209,17 @@ body {
 }
 
 .timeline-item {
-  grid-template-columns: var(--tl-col) 1fr;
-  column-gap: 16px;
+   display: grid;                          /* <-- this is the key piece */
+   grid-template-columns: var(--tl-col) 1fr;
+   column-gap: 16px;
+   align-items: start;
 }
 
 .timeline-col {
-  position: relative;
-  display: flex;
-  justify-content: center; /* center dot in the column */
+   position: relative;
+   display: flex;
+   justify-content: center; /* center dot in the column */
+   width: var(--tl-col);     /* belt & suspenders so the column never collapses */
 }
 
 .timeline-dot {
