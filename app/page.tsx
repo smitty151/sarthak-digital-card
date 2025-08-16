@@ -25,7 +25,7 @@ type TimelineItem = {
   role: string;
   duration: string;
   summary?: string; // a one-line, shown always
-  highlights?; string[]; // bullets, shown when expanded
+  highlights?: string[]; // bullets, shown when expanded
 };
 
 // ---------------------------------------------------------------------------
