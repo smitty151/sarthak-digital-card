@@ -331,23 +331,11 @@ function ExperienceTimeline({
                   }}
                   aria-expanded={isOpen}
                 >
-                <p className="text-[var(--primary-orange)] font-semibold">
-                  {item.company}
-                </p>
-                <h3 className="text-l md:text-xl font-semibold mt-1">
-                  {item.role}
-                </h3>
-                <p className="text-sm text-[var(--muted)]">
-                  {item.duration}
-                </p>
-                {/* optional one-line summary (shown always if you have it) */}
                 <div className="mt-1 flex items-center justify-between gap-3">
-                  {typeof item.summary === 'string' && item.summary.trim() && (
-                    <p className="mt-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
-                      {item.summary}
-                    </p>
-                  )}
-                    <button
+                  <p className="text-[var(--primary-orange)] font-semibold">
+                    {item.company}
+                  </p>
+                  <button
                     type="button"
                     aria-label={isOpen ? 'Collapse highlights' : 'Expand highlights'}
                     className="shrink-0 rounded-full p-1.5 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
@@ -371,6 +359,18 @@ function ExperienceTimeline({
                     />
                   </button>
                 </div>
+                <h3 className="text-l md:text-l font-semibold mt-1">
+                  {item.role}
+                </h3>
+                <p className="text-sm text-[var(--muted)]">
+                  {item.duration}
+                </p>
+                {/* optional one-line summary (shown always if you have it) */}
+                {typeof item.summary === 'string' && item.summary.trim() && (
+                  <p className="mt-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+                    {item.summary}
+                  </p>
+                )}
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
                   <div
