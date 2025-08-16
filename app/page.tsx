@@ -81,7 +81,7 @@ const content = {
   },
     timeline: [
     {
-      company: 'PricewaterhouseCoopers (PwC)',
+      company: 'PricewaterhouseCoopers',
       role: 'Enterprise & Functional Strategy',
       duration: 'May 2025 – Present • Bengaluru, India',
       summary:
@@ -94,7 +94,7 @@ const content = {
       ],
     },
     {
-      company: 'PricewaterhouseCoopers (PwC)',
+      company: 'PricewaterhouseCoopers',
       role: 'M&A Deals Transformation',
       duration: 'Aug 2022 – Feb 2024 • Chicago & Bengaluru',
       summary:
