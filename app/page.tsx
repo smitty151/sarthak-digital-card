@@ -81,7 +81,7 @@ const content = {
   },
     timeline: [
     {
-      company: 'PwC',
+      company: 'PricewaterhouseCoopers (PwC)',
       role: 'Enterprise & Functional Strategy',
       duration: 'May 2025 – Present • Bengaluru, India',
       summary:
@@ -94,7 +94,7 @@ const content = {
       ],
     },
     {
-      company: 'PwC',
+      company: 'PricewaterhouseCoopers (PwC)',
       role: 'M&A Deals Transformation',
       duration: 'Aug 2022 – Feb 2024 • Chicago & Bengaluru',
       summary:
@@ -107,7 +107,7 @@ const content = {
       ],
     },
     {
-      company: 'Nitya Capital',
+      company: 'Nitya Capital LLC',
       role: 'Acquisitions & Asset Management',
       duration: 'Sep 2017 – Jun 2022 • Houston, USA',
       summary:
@@ -277,7 +277,7 @@ function ExperienceTimeline({
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
                   <div
-                    className={`transition-all duration-300 ease-out overflow-hidden ${
+                    className={`transition-all duration-700 ease-out overflow-hidden ${
                       isOpen ? 'max-h-[480px] mt-3 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
