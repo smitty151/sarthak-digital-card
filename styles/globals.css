@@ -29,8 +29,8 @@
    --tl-dot: 10px;            /* solid dot diameter */
    --tl-halo: 2px;           /* halo padding around the dot */
    --tl-offset: 1.6rem;       /* vertical offset of the dot inside each item */
-
-  color-scheme: light; /* native widgets pick light by default */
+   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+   color-scheme: light; /* native widgets pick light by default */
 }
 
 .dark {
@@ -296,4 +296,16 @@ body {
 @keyframes pdf-shimmer {
   0% { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
+}
+
+@layer utilities {
+  /* Use on elements where you want the spring timing curve */
+  .ease-spring {
+    transition-timing-function: var(--ease-spring) !important;
+  }
+
+  /* Use when animating height/opacity/margin only (cleaner than 'transition-all') */
+  .transition-h-o-m {
+    transition-property: height, opacity, margin-top !important;
+  }
 }
