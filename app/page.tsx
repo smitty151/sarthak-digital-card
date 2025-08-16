@@ -207,6 +207,78 @@ function QRCard() {
   );
 }
 
+/* ---------- Collapse (smooth open/close) ---------- */
+function Collapse({
+  open,
+  duration = 550,                    // tweak this for slower/faster
+  children,
+}: {
+  open: boolean;
+  duration?: number;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // Respect reduced motion
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const d = `${prefersReduced ? 0 : duration}ms`;
+    const ease = 'cubic-bezier(0.22, 1, 0.36, 1)'; // spring-ish
+
+    el.style.overflow = 'hidden';
+    el.style.transitionProperty = 'height, opacity, margin-top';
+    el.style.transitionDuration = d;
+    el.style.transitionTimingFunction = ease;
+    el.style.willChange = 'height';
+
+    if (open) {
+      // from 0 → measured height → auto
+      el.style.display = 'block';
+      el.style.height = '0px';
+      el.style.opacity = '0';
+      // force reflow
+      void el.offsetHeight;
+      const target = el.scrollHeight;
+      el.style.height = `${target}px`;
+      el.style.opacity = '1';
+      el.style.marginTop = '0.5rem';
+
+      const onEnd = () => {
+        el.style.height = 'auto'; // so content can grow/shrink naturally
+        el.removeEventListener('transitionend', onEnd);
+      };
+      el.addEventListener('transitionend', onEnd);
+    } else {
+      // from auto → measured height → 0
+      const current = el.scrollHeight;
+      el.style.height = `${current}px`;
+      el.style.opacity = '1';
+      el.style.marginTop = '0rem';
+      // force reflow
+      void el.offsetHeight;
+      el.style.height = '0px';
+      el.style.opacity = '0';
+    }
+  }, [open, duration]);
+
+  // Start closed by default
+  return (
+    <div
+      ref={ref}
+      style={{ height: open ? 'auto' : '0px', opacity: open ? 1 : 0, marginTop: open ? '0.5rem' : 0 }}
+      aria-hidden={!open}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ---------- ExperienceTimeline (interactive) ---------- */
 function ExperienceTimeline({
   data,
@@ -276,17 +348,13 @@ function ExperienceTimeline({
                 )}
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
-                  <div
-                    className={`transition-all duration-20000 ease-in-out overflow-hidden ${
-                      isOpen ? 'max-h-[480px] mt-3 opacity-90' : 'max-h-0 opacity-0'
-                    }`}
-                  >
+                  <Collapse open={isOpen} duration={650}>     {/* ← slower/smoother */}
                     <ul className="list-disc pl-5 space-y-1 text-[15px] text-neutral-700 dark:text-neutral-200">
                       {item.highlights.map((h, idx) => (
                         <li key={idx}>{h}</li>
                       ))}
                     </ul>
-                  </div>
+                  </Collapse>
                 ) : null}      
               </button>
             </li>
