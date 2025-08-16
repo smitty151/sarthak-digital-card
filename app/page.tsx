@@ -348,14 +348,18 @@ function ExperienceTimeline({
                 )}
                 {/* expandable highlights */}
                 {item.highlights?.length ? (
-                  <Collapse open={isOpen} duration={650}>     {/* ← slower/smoother */}
+                  <div
+                    className={`transition-all duration-300 ease-out overflow-hidden ${
+                      isOpen ? 'max-h-[480px] mt-3 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
                     <ul className="list-disc pl-5 space-y-1 text-[15px] text-neutral-700 dark:text-neutral-200">
                       {item.highlights.map((h, idx) => (
                         <li key={idx}>{h}</li>
                       ))}
                     </ul>
-                  </Collapse>
-                ) : null}      
+                  </div>
+                ) : null}
               </button>
             </li>
           );
