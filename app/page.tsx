@@ -19,15 +19,6 @@ import {
   Download, QrCode, Menu
 } from 'lucide-react'
 
-// ----------------- Timeline Types -----------------
-type TimelineItem = {
-  company: string;
-  role: string;
-  duration: string;
-  summary?: string; // a one-line, shown always
-  highlights?: string[]; // bullets, shown when expanded
-};
-
 // ---------------------------------------------------------------------------
 // Custom content data
 const content = {
@@ -90,7 +81,7 @@ const content = {
   },
     timeline: [
     {
-      company: 'PricewaterhouseCoopers (PwC)',
+      company: 'PwC',
       role: 'Enterprise & Functional Strategy',
       duration: 'May 2025 – Present • Bengaluru, India',
       summary:
@@ -103,9 +94,9 @@ const content = {
       ],
     },
     {
-      company: 'PricewaterhouseCoopers (PwC)',
+      company: 'PwC',
       role: 'M&A Deals Transformation',
-      duration: 'Aug 2022 – Feb 2024 • Chicago, USA & Bengaluru, India',
+      duration: 'Aug 2022 – Feb 2024 • Chicago & Bengaluru',
       summary:
         'Integration/separation playbooks and synergy valuation across multiple industries.',
       highlights: [
@@ -217,12 +208,19 @@ function QRCard() {
 }
 
 /* ---------- ExperienceTimeline (interactive) ---------- */
-function ExperienceTimeline({ data }: { data: TimelineItem[] }){
+function ExperienceTimeline({
+  data,
+}: {
+  data: {
+    company: string;
+    role: string;
+    duration: string;
+    summary: string;
+    highlights?: string[];
+  }[];
+}) {
   const [open, setOpen] = useState<number | null>(null);
-  const canHover =
-    typeof window !== "undefined" &&
-    window.matchMedia("(hover: hover)").matches;
-  
+
   return (
     <div className="timeline relative">
       {/* Rounded spine element (thicker + rounded ends) */}
@@ -237,17 +235,14 @@ function ExperienceTimeline({ data }: { data: TimelineItem[] }){
           return (
             <li
               key={i}
-              className="timeline-item tap"
-              // Hover only on devices that actually support hover:
-              onMouseEnter={canHover ? () => setOpen(i) : undefined}
-              onMouseLeave={canHover ? () => setOpen((v) => (v === i ? null : v)) : undefined}
-              // One tap/click toggles immediately everywhere:
-              onClick={() => setOpen((v) => (v === i ? null : i))}
-              role="button"
-              aria-expanded={open === i}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+              className="timeline-item grid"
+              onMouseEnter={() => setOpen(i)}
+              onMouseLeave={() => setOpen((v) => (v === i ? null : v))}
+              onClick={() => setOpen((v) => (v === i ? null : i))}      // <-- tap/click toggle
+              role="button"                                             // a11y
+              tabIndex={0}                                              // focusable
+              onKeyDown={(e) => {                                       // keyboard support
+                if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   setOpen((v) => (v === i ? null : i));
                 }
@@ -266,24 +261,25 @@ function ExperienceTimeline({ data }: { data: TimelineItem[] }){
                 <h3 className="text-xl md:text-2xl font-semibold mt-1">
                   {item.role}
                 </h3>
-                <p className="text-sm text-[var(--muted)]">
-                  {item.duration}
+                <p className="text-sm text-[var(--muted)]">{item.duration}</p>
+                <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  {item.summary}
                 </p>
-                {item.summary && (
-                  <p className="mt-2 text-neutral-700 dark:text-neutral-300 leading-relaxed">
-                    {item.summary}
-                  </p>
-                )}
+
                 {/* expandable highlights */}
-                {open === i && Array.isArray(item.highlights) && item.highlights.length > 0 && (
-                  <ul className="mt-3 space-y-2 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
-                    {item.highlights.map((ach, j) => (
-                      <li key={j} className="list-disc pl-5">
-                        {ach}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                {item.highlights?.length ? (
+                  <div
+                    className={`transition-all duration-300 ease-out overflow-hidden ${
+                      isOpen ? 'max-h-[480px] mt-3 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <ul className="list-disc pl-5 space-y-1 text-[15px] text-neutral-700 dark:text-neutral-200">
+                      {item.highlights.map((h, idx) => (
+                        <li key={idx}>{h}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </div>
             </li>
           );
@@ -621,7 +617,7 @@ export default function Page() {
       {/* Hero */}
       <div className="max-w-5xl mx-auto px-4 pt-10 md:pt-14 pb-6 md:pb-10 relative z-10">
         <SectionWithAnimation>
-          <div className="card overflow-hidden rounded-2xl p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
+          <div className="card overflow-hidden rounded2xl p-6 md:p-8 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 ease-in-out">
             <div className="grid md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2 order-2 md:order-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight font-header" style={{ color: 'var(--ink)' }}>{content.name}</h1>
